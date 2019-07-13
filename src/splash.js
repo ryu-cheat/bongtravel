@@ -37,7 +37,6 @@ class SplashView extends Component{ // splash를 없애줄 때 state의 영향�
     opacity: new Animated.Value(1),
     progress: new Animated.Value(0),
   }
-
   loadedTimeMs = Date.now()
 
   constructor(p){
@@ -46,8 +45,19 @@ class SplashView extends Component{ // splash를 없애줄 때 state의 영향�
     Controller.splash.open = this.open
   }
   
+  // animation
+  animationTimeout = null
   animation = Animated.timing(this.state.progress, { duration: 6300, toValue: 1 })
+  animationStart = () => {
+    this.state.progress.setValue(0)
+    this.animation.stop()
+    try{ clearTimeout(this.animationTimeout) }catch(e){}
+    this.animation.start(()=>{
+      this.animationTimeout = setTimeout( this.animationStart, 1000 )
+    })
+  }
 
+  // splash controller
   close = () => {
     setTimeout(() => { // 최소 3초 뒤에 실행되도록 함
       Animated.timing(this.state.opacity, {
@@ -62,16 +72,14 @@ class SplashView extends Component{ // splash를 없애줄 때 state의 영향�
 
   open = () => {
     this.state.opacity.setValue(1)
-    this.state.progress.setValue(0)
     this.loadedTimeMs = Date.now()
     
     this.setState({
       show: true
-    }, () => {
-      this.animation.start()
-    })
+    }, this.animationStart)
   }
 
+  // render
   render(){
     return this.state.show && (
       <SplashScreen style={{ opacity: this.state.opacity }}>
@@ -82,7 +90,7 @@ class SplashView extends Component{ // splash를 없애줄 때 state의 영향�
 
   // life cycle
   componentDidMount(){
-    this.animation.start()
+    this.animationStart()
   }
 }
 

@@ -12,6 +12,7 @@ import {
   View,
   Text,
   StyleSheet,
+  StatusBar,
 } from 'react-native';
 
 // 플러그인 초기화
@@ -26,6 +27,8 @@ import Activities from './activities/index'
 // 첫 구조에는 다른 컴포넌트들이 잘 끼어들 수 있도록 탭을 두번씩 넣어준다
 const App = () => {
   return (
+  <>
+      <StatusBar backgroundColor='#ffffff' barStyle='dark-content'/>
       <SafeAreaView style={style.flex1}>
 
           <Splash>
@@ -33,6 +36,7 @@ const App = () => {
           </Splash>
 
       </SafeAreaView>
+  </>
   )
 }
 
