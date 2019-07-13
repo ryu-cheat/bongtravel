@@ -21,6 +21,7 @@ import './plugins/lang'
 import './plugins/workpool'
 import './plugins/sockets'
 
+import Navigator from './components/services/Navigator'
 import Splash from './splash'
 import Activities from './activities/index'
 
@@ -32,7 +33,9 @@ const App = () => {
       <SafeAreaView style={style.flex1}>
 
           <Splash>
+            <Navigator>
               <Activities />
+            </Navigator>
           </Splash>
 
       </SafeAreaView>
