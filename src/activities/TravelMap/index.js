@@ -12,6 +12,7 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 
 import MapView, { Marker, Polyline } from 'react-native-maps';
@@ -49,7 +50,7 @@ class Index extends Component{
   }
   render(){
     const { width } = Dimensions.get('window')
-
+    
     let visits = this.state.visits.length > 0 ? this.state.visits : [ this.state.myLatLng ]
     
     // 첫 region은 이동한 경로를 한눈에 볼 수 있도록 보정합니다.
@@ -57,27 +58,31 @@ class Index extends Component{
 
     return (
       <View style={style.travelWrapper}>
-        <MapView
-          initialRegion={initialRegion}
-          style={{
-            width,
-            height: width,
-          }}>
-          {visits.map((visit, index) => (
-            <Marker
-              coordinate={visit.latlng}
-              title={visit.title}
-              description={visit.description}
-              key={index}
-            />
-          ))}
+        <View style={style.relative}>
+          <MapView
+            initialRegion={initialRegion}
+            style={{ width, height: width }}>
+            {visits.map((visit, index) => (
+              <Marker
+                coordinate={visit.latlng}
+                title={visit.title}
+                description={visit.description}
+                key={index}
+              />
+            ))}
 
-          <Polyline
-            coordinates={this.state.visits.map(m => m.latlng)}
-            strokeColor="#000"
-            strokeWidth={6}
-          />
-        </MapView>
+            <Polyline
+              coordinates={this.state.visits.map(m => m.latlng)}
+              strokeColor="#000"
+              strokeWidth={6}
+            />
+          </MapView>
+
+          <TouchableOpacity style={style.writeTravelJournalButton}>
+            <Text style={style.writeTravelJournalButtonText}>여행일지 작성하기</Text>
+          </TouchableOpacity>
+
+        </View>
       </View>
     )
   }
@@ -85,8 +90,28 @@ class Index extends Component{
 
 const style = StyleSheet.create({
   flex1: { flex: 1 },
+  relative:{position:'relative'},
   travelWrapper:{
     flex: 1,
+  },
+
+  writeTravelJournalButton:{
+    position:'absolute',
+    right: 20,
+    bottom: 20,
+    
+    paddingHorizontal:15,
+    height: 40,
+    alignItems:'center',
+    flexDirection:'row',
+    backgroundColor:'#fff',
+    borderRadius: 20,
+  },
+
+  writeTravelJournalButtonText:{
+    fontSize: 13,
+    fontWeight:'bold',
+
   },
 })
 

@@ -15,6 +15,8 @@ import {
 import Controller from '../plugins/controller'
 import Login from './login'
 import Main from './main'
+import { createAppContainer, createStackNavigator,  } from 'react-navigation'
+
 
 class Index extends Component{
   render(){
@@ -30,5 +32,38 @@ class Index extends Component{
   }
 }
 
+const Index2 = () => <View><Text>daw</Text></View>;
 
-export default Index;
+const Navigator = createStackNavigator(
+  {
+    'Index': { screen: Index, navigationOptions: { gesturesEnabled: true } },
+    'Index2': { screen: Index2, navigationOptions: { gesturesEnabled: true } }
+  },
+  {
+  initialRouteName:'Index',
+  headerMode:'none',
+  
+  transitionConfig: () => ({
+    screenInterpolator: sceneProps => {
+      const { layout, position, scene } = sceneProps;
+      const { index } = scene;
+      const width = layout.initWidth;
+
+      return {
+        opacity: position.interpolate({
+          inputRange: [index - 1, index, index + 1],
+          outputRange: [ 0, 1, 0],
+        }),
+        transform: [{
+          translateX: position.interpolate({
+            inputRange: [index - 1, index, index + 1],
+            outputRange: [width, 0, -width],
+          }),
+        }]
+      };
+    }
+  }),
+
+});
+
+export default createAppContainer(Navigator);
