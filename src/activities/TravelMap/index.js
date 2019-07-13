@@ -51,6 +51,8 @@ class Index extends Component{
     const { width } = Dimensions.get('window')
 
     let visits = this.state.visits.length > 0 ? this.state.visits : [ this.state.myLatLng ]
+    
+    // 첫 region은 이동한 경로를 한눈에 볼 수 있도록 보정합니다.
     let initialRegion = this.getInitialRegion(visits)
 
     return (
