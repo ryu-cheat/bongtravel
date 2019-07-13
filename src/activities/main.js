@@ -11,6 +11,7 @@ import {
   View,
   Text,
   StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
 
 import styled from 'styled-components/native'
@@ -43,7 +44,8 @@ class Index extends Component{
   }
 }
 
-
+// goToPage를 Controller에 넣어줍니다.
+// activeTab이 변하면 Header를 이동시킵니다.
 class RenderTabBar extends Component{
   constructor(p){
     super(p)
@@ -57,11 +59,14 @@ class RenderTabBar extends Component{
   }
   render(){
     let { activeTab } = this.props
-    return (<TabbarWrapper>
-      {Tabs.map(( tab, index ) => <Tabbar active={index == activeTab} key={index}>
-        <Text>{tab[1]}</Text>
-      </Tabbar>)}
-    </TabbarWrapper>)
+    return (<>
+      <View style={style.horizontalDivider}/>
+      <TabbarWrapper>
+        {Tabs.map(( tab, index ) => <Tabbar active={index == activeTab} key={index} onPress={()=>Controller.mainTab.goToPage(index)}>
+          <TabbarText active={index == activeTab}>{tab[1]}</TabbarText>
+        </Tabbar>)}
+      </TabbarWrapper>
+    </>)
   }
 }
 
@@ -83,20 +88,23 @@ class Header extends Component{
   render(){
     if ( this.state.tabId == 'home' ) {
       return (
-        <View>
-          <Text>나의 여행 일지</Text>
+        <View style={style.header_wrapper}>
+          <Text style={style.header_title}>나의 여행 일지</Text>
+          <TouchableOpacity style={style.header_button}>
+            <Text style={style.header_button_text}>여행관리</Text>
+          </TouchableOpacity>
         </View>
       )
     } else if ( this.state.tabId == 'social' ) {
       return (
-        <View>
-          <Text>소셜</Text>
+        <View style={style.header_wrapper}>
+          <Text style={style.header_title}>소셜</Text>
         </View>
       )
     } else if ( this.state.tabId == 'setting' ) {
       return (
-        <View>
-          <Text>설정</Text>
+        <View style={style.header_wrapper}>
+          <Text style={style.header_title}>설정</Text>
         </View>
       )
     }
@@ -108,14 +116,30 @@ class Header extends Component{
 const TabbarWrapper = styled.View`
   flex-direction: row;
 `
-const Tabbar = styled.View`
+const Tabbar = styled.TouchableOpacity`
   flex: 1;
   align-items: center;
-  background: ${props=>props.active?'red':'#ffffff'};
+  height: 50;
+  justify-content: center;
+`
+const TabbarText = styled.Text`
+  font-size: 13;
+  ${props=>props.active?
+    `
+      color: #1d4a83;
+      font-weight: bold;
+    `:
+    `color: #000;`};
 `
 
 const style = StyleSheet.create({
-  flex1: { flex: 1 }
+  flex1: { flex: 1 },
+  header_title: { fontSize: 15, fontWeight: 'bold', color: '#000', flex: 1 },
+  header_wrapper: { height: 55, paddingHorizontal: 15, alignItems:'center', flexDirection:'row', },
+  header_button: {},
+  header_button_text: { color: '#777', fontSize: 13 },
+
+  horizontalDivider: { height: 1, backgroundColor:'#efefef', }
 })
 
 export default Index;
