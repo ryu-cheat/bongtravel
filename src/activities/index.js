@@ -12,15 +12,13 @@ import {
   Text,
 } from 'react-native';
 
+import Login from './login'
+import Main from './main'
 
 class Index extends Component{
   render(){
     return (
-      <View>
-        
-
-        
-      </View>
+      <Main />
     )
   }
 
