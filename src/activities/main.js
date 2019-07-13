@@ -35,7 +35,7 @@ class Index extends Component{
         tabBarPosition={'bottom'}
         renderTabBar={()=><RenderTabBar />}>
         
-        {Tabs.map(( {2: TabComponent}, index ) => <View key={index} />)}
+        {Tabs.map(( {2: TabComponent}, index ) => <TabComponent key={index} />)}
         
       </ScrollableTabView>
     </>

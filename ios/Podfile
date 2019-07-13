@@ -30,6 +30,8 @@ target 'bongtravel' do
 
   pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
 
+  pod 'react-native-maps', :path => '../node_modules/react-native-maps'
+
   target 'bongtravelTests' do
     inherit! :search_paths
     # Pods for testing
