@@ -10,18 +10,19 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
+  StyleSheet,
 } from 'react-native';
 
 import styled from 'styled-components/native'
 import Controller from '../plugins/controller'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
+import TravelMap from './TravelMap'
 
-// Controller.mainTab.goToPage = 
 const Tabs = [
-  ['home','홈'],
-  ['social','소셜'],
-  ['setting','설정'],
+  ['home','홈', TravelMap],
+  ['social','소셜', View],
+  ['setting','설정', View],
 ]
 
 class Index extends Component{
@@ -30,14 +31,11 @@ class Index extends Component{
     <>
       <Header />
       <ScrollableTabView
-        style={{ flex: 1 }}
+        style={style.flex1}
         tabBarPosition={'bottom'}
         renderTabBar={()=><RenderTabBar />}>
         
-        <Text key={1}>dwajiodaw</Text>
-        <Text key={2}>dwajiodaw</Text>
-        <Text key={3}>dwajiodaw</Text>
-
+        {Tabs.map(( {2: TabComponent}, index ) => <View key={index} />)}
         
       </ScrollableTabView>
     </>
@@ -116,5 +114,8 @@ const Tabbar = styled.View`
   background: ${props=>props.active?'red':'#ffffff'};
 `
 
+const style = StyleSheet.create({
+  flex1: { flex: 1 }
+})
 
 export default Index;

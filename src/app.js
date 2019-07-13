@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   View,
   Text,
+  StyleSheet,
 } from 'react-native';
 
 // 플러그인 초기화
@@ -25,7 +26,7 @@ import Activities from './activities/index'
 // 첫 구조에는 다른 컴포넌트들이 잘 끼어들 수 있도록 탭을 두번씩 넣어준다
 const App = () => {
   return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={style.flex1}>
 
           <Splash>
               <Activities />
@@ -35,5 +36,8 @@ const App = () => {
   )
 }
 
+const style = StyleSheet.create({
+  flex1: { flex: 1 }
+})
 
 export default App;
