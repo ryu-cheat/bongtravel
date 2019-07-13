@@ -12,6 +12,7 @@ import {
   Text,
 } from 'react-native';
 
+import Controller from '../plugins/controller'
 import Login from './login'
 import Main from './main'
 
@@ -24,7 +25,8 @@ class Index extends Component{
 
   // life cycle
   componentDidMount(){
-    this.props.splashController.close()
+    // 실행 전에 상위 컴포넌트(스플래시) 에서 초기화 돼야 한다
+    Controller.splash.close()
   }
 }
 

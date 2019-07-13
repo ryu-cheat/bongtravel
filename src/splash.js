@@ -16,20 +16,15 @@ import {
 import LottieView from 'lottie-react-native';
 import styled from 'styled-components/native';
 
-const splashController = { close:()=>{ alert('초기화가 필요합니다.') } }
+import Controller from './plugins/controller'
 
 export default class Splash extends Component{
-  remakeChildren = child => {
-    return React.cloneElement(child, { splashController })
-  }
-  // render
   render(){
     return (
       <SplashWrapper>
         <SplashChildren>
-          {React.Children.map(this.props.children, this.remakeChildren)}
+          {this.props.children}
         </SplashChildren>
-
         <SplashView />
       </SplashWrapper>
     )
@@ -47,17 +42,34 @@ class SplashView extends Component{ // splash를 없애줄 때 state의 영향�
 
   constructor(p){
     super(p)
-    splashController.close = this.close
+    Controller.splash.close = this.close
+    Controller.splash.open = this.open
   }
+  
+  animation = Animated.timing(this.state.progress, { duration: 6300, toValue: 1 })
+
   close = () => {
     setTimeout(() => { // 최소 3초 뒤에 실행되도록 함
       Animated.timing(this.state.opacity, {
         duration: 300,
         toValue: 0,
       }).start(()=>{
+        this.animation.stop()
         this.setState({ show: false })
       })
     }, Math.max( 0, 3000 - (Date.now() - this.loadedTimeMs) ))
+  }
+
+  open = () => {
+    this.state.opacity.setValue(1)
+    this.state.progress.setValue(0)
+    this.loadedTimeMs = Date.now()
+    
+    this.setState({
+      show: true
+    }, () => {
+      this.animation.start()
+    })
   }
 
   render(){
@@ -70,10 +82,7 @@ class SplashView extends Component{ // splash를 없애줄 때 state의 영향�
 
   // life cycle
   componentDidMount(){
-    Animated.timing(this.state.progress, {
-      duration: 6300,
-      toValue: 1,
-    }).start()
+    this.animation.start()
   }
 }
 

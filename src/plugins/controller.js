@@ -5,8 +5,13 @@ const mainTab = {
      goToPage: init,
 }
 
+const splash = {
+     close: init,
+     open: init,
+}
 
 module.exports = {
      mainTab,
+     splash,
      init,
 }
