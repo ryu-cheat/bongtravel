@@ -13,6 +13,7 @@ import {
   Animated,
 } from 'react-native';
 
+import LottieView from 'lottie-react-native';
 import styled from 'styled-components/native';
 
 const splashController = { close:()=>{ alert('초기화가 필요합니다.') } }
@@ -39,29 +40,47 @@ class SplashView extends Component{ // splash를 없애줄 때 state의 영향�
   state = {
     show: true,
     opacity: new Animated.Value(1),
+    progress: new Animated.Value(0),
   }
+
+  loadedTimeMs = Date.now()
 
   constructor(p){
     super(p)
     splashController.close = this.close
   }
   close = () => {
-    Animated.timing(this.state.opacity, {
-      duration: 300,
-      toValue: 0,
-    }).start(()=>{
-      this.setState({ show: false })
-    })
+    setTimeout(() => { // 최소 3초 뒤에 실행되도록 함
+      Animated.timing(this.state.opacity, {
+        duration: 300,
+        toValue: 0,
+      }).start(()=>{
+        this.setState({ show: false })
+      })
+    }, Math.max( 0, 3000 - (Date.now() - this.loadedTimeMs) ))
   }
 
   render(){
     return this.state.show && (
       <SplashScreen style={{ opacity: this.state.opacity }}>
-        <Text>스플래시입니다</Text>
+        <SplashAnimation loop progress={this.state.progress} />
       </SplashScreen>
     )
   }
+
+  // life cycle
+  componentDidMount(){
+    Animated.timing(this.state.progress, {
+      duration: 6300,
+      toValue: 1,
+    }).start()
+  }
 }
+
+const SplashAnimation = styled(LottieView).attrs({ source: require('../static/animation/splash.json') })`
+  width: 250;
+  height: 250;
+`
 
 const SplashWrapper = styled.View`
   position: relative;
@@ -73,6 +92,7 @@ const SplashScreen = styled(Animated.View)`
   flex: 1;
   background-color: #ffffff;
   align-items: center;
+  justify-content: center;
 `
 const SplashChildren = styled.View`
   position: absolute;

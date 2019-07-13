@@ -28,6 +28,8 @@ target 'bongtravel' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
+  pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
+
   target 'bongtravelTests' do
     inherit! :search_paths
     # Pods for testing
