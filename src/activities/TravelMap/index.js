@@ -18,52 +18,60 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 
 class Index extends Component{
   state = {
-    markers: [
-      {
-        latlng:{
-          latitude: 37.78825,
-          longitude: -122.4324,
-        },
-        title:'123',
-        description:'321',
+    visits: [],
+    myLatLng: {
+      latlng:{
+        latitude: 37.79825,
+        longitude: -122.4324,
       },
-      {
-        latlng:{
-          latitude: 37.79825,
-          longitude: -122.4324,
-        },
-        title:'123',
-        description:'321',
-      },
-    ]
+      title:'123',
+      description:'321',
+    }
+  }
+  getDelta = (visits: Array, key: 'longitude' | 'latitude') => {
+    if (visits.length <= 1) {
+      return 0.1
+    }else{
+      let minValue = visits.reduce((prev, current)=> Math.min(prev, current.latlng[key]), visits[0].latlng[key])
+      let maxValue = visits.reduce((prev, current)=> Math.max(prev, current.latlng[key]), visits[0].latlng[key])
+      return (maxValue - minValue) * 3
+    }
+  }
+  getInitialRegion = (visits: Array) => {
+    let initialRegion = {}
+
+    initialRegion.latitude = visits.reduce((prev, current)=> prev+current.latlng.latitude, 0)/visits.length
+    initialRegion.longitude = visits.reduce((prev, current)=> prev+current.latlng.longitude, 0)/visits.length
+    initialRegion.latitudeDelta = this.getDelta(visits, 'latitude')
+    initialRegion.longitudeDelta = this.getDelta(visits, 'longitude')
+
+    return initialRegion
   }
   render(){
     const { width } = Dimensions.get('window')
 
+    let visits = this.state.visits.length > 0 ? this.state.visits : [ this.state.myLatLng ]
+    let initialRegion = this.getInitialRegion(visits)
+
     return (
-      <View style={style.flex1}>
+      <View style={style.travelWrapper}>
         <MapView
-          initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
+          initialRegion={initialRegion}
           style={{
             width,
             height: width,
           }}>
-          {this.state.markers.map((marker, index) => (
+          {visits.map((visit, index) => (
             <Marker
-              coordinate={marker.latlng}
-              title={marker.title}
-              description={marker.description}
+              coordinate={visit.latlng}
+              title={visit.title}
+              description={visit.description}
               key={index}
             />
           ))}
 
           <Polyline
-            coordinates={this.state.markers.map(m => m.latlng)}
+            coordinates={this.state.visits.map(m => m.latlng)}
             strokeColor="#000"
             strokeWidth={6}
           />
@@ -74,7 +82,10 @@ class Index extends Component{
 }
 
 const style = StyleSheet.create({
-  flex1: { flex: 1 }
+  flex1: { flex: 1 },
+  travelWrapper:{
+    flex: 1,
+  },
 })
 
 
