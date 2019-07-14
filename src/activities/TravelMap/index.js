@@ -79,7 +79,7 @@ class Index extends Component{
               strokeWidth={6}
             />
           </MapView>
-          <WriteTravelButton />
+          <WriteTravelButton travel={this.props.travel} />
         </View>
       </View>
     )
@@ -97,7 +97,7 @@ class WriteTravelButton extends Component{
   }
 
   write = () => {
-    navigator.push(<WriteTravel />)
+    navigator.push(<WriteTravel travel={this.props.travel}/>)
   }
 
   render(){

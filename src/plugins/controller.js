@@ -1,3 +1,4 @@
+// storage랑 헷갈리니깐 controller는 동사를 앞에 써주자
 
 // 여기선 인터페이스만 만들어준다
 function init(){ alert('초기화가 필요합니다'); }
@@ -26,6 +27,10 @@ class activityController {
      }
 }
 
+const writeTravel = { 
+     loadInputTabs: () => initPath('/src/activities/TravelMap/WriteTravel.js')
+}
+
 module.exports = {
      mainTab,
      splash,
@@ -35,4 +40,5 @@ module.exports = {
      initPath,
      
      activityController,
+     writeTravel,
 }
