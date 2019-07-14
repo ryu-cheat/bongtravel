@@ -15,9 +15,9 @@ import {
 } from 'react-native';
 
 import styled from 'styled-components/native'
-import Controller from '../plugins/controller'
+import Storage from '../plugins/storage'
+import Controller, { activityController } from '../plugins/controller'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
-
 import TravelMap from './TravelMap'
 
 const Tabs = [
@@ -26,21 +26,72 @@ const Tabs = [
   ['setting','설정', View],
 ]
 
-class Index extends Component{
+export default class Main extends Component{
+  state = {
+    _loaded: false,
+
+    travels: [],
+    travelSelectedIdx: -1,
+  }
+  constructor (p) {
+    super(p)
+    activityController.main.loadTravels = this.loadTravels
+    activityController.main.loadTravels = this.loadTravels
+    activityController.main.manageTravel = this.manageTravel
+  }
+  loadTravelSelectedIdx = async() => {
+    let travelSelectedIdx  = await Storage.travelSelectedIdx.get(0)
+    this.setState({ travelSelectedIdx }, this.loadingFinish)
+  }
+  loadTravels = async() => {
+    // 추후 network통신으로 바꿀걸 대비하여 promise로 해두기
+    let travels  = await new Promise(resolve => {
+      resolve([
+        { no: 1, name: '2019년 제주도여행' },
+        { no: 2, name: '2019년 다낭여행' },
+      ])
+    })
+    this.setState({ travels }, this.loadingFinish)
+    return travels
+  }
+  loadingFinish = () => {
+    let { _loaded, travels, travelSelectedIdx } = this.state
+    if (!_loaded) {
+      if (travels.length > 0 && travelSelectedIdx != -1) {
+        this.setState({
+          _loaded: true
+        })
+      }
+    }
+  }
+  manageTravel = () => {
+    let { travels, travelSelectedIdx } = this.state
+
+  }
+
   render(){
+    let { _loaded, travels, travelSelectedIdx } = this.state
+    if (!_loaded) return (<View />) // 나중에 로딩 뷰 띄우기
+
+    let travel = travels[ travelSelectedIdx ]
+
     return (
     <>
-      <Header />
+      <Header travel={ travel } />
       <ScrollableTabView
         style={style.flex1}
         tabBarPosition={'bottom'}
         renderTabBar={()=><RenderTabBar />}>
         
-        {Tabs.map(( {2: TabComponent}, index ) => <TabComponent key={index} />)}
+        {Tabs.map(( {2: TabComponent}, index ) => <TabComponent travels={ this.state.travels } key={index} />)}
         
       </ScrollableTabView>
     </>
     )
+  }
+  componentDidMount(){
+    this.loadTravels()
+    this.loadTravelSelectedIdx()
   }
 }
 
@@ -84,13 +135,13 @@ class Header extends Component{
       })
     }
   }
-
   render(){
     if ( this.state.tabId == 'home' ) {
+      let { travel } = this.props
       return (
         <View style={style.header_wrapper}>
-          <Text style={style.header_title}>나의 여행 일지</Text>
-          <TouchableOpacity style={style.header_button}>
+          <Text style={style.header_title}>{travel.name}</Text>
+          <TouchableOpacity style={style.header_button} onPress={activityController.main.manageTravel}>
             <Text style={style.header_button_text}>여행관리</Text>
           </TouchableOpacity>
         </View>
@@ -142,4 +193,3 @@ const style = StyleSheet.create({
   horizontalDivider: { height: 1, backgroundColor:'#efefef', }
 })
 
-export default Index;

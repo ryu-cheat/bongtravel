@@ -18,6 +18,14 @@ const navigator = {
      popToTop: (): void => initPath('/src/components/services/Navigator.js'),
 }
 
+class activityController {
+     static main = {
+          loadTravels: () => initPath('/src/activities/main.js'),
+          loadTravelSelectedIdx: () => initPath('/src/activities/main.js'),
+          manageTravel: () => initPath('/src/activities/main.js'),
+     }
+}
+
 module.exports = {
      mainTab,
      splash,
@@ -25,4 +33,6 @@ module.exports = {
 
      init,
      initPath,
+     
+     activityController,
 }
