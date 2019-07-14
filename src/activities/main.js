@@ -40,7 +40,7 @@ export default class Main extends Component{
     activityController.main.manageTravel = this.manageTravel
   }
   loadTravelSelectedIdx = async() => {
-    let travelSelectedIdx  = await Storage.travelSelectedIdx.get(0)
+    let travelSelectedIdx  = await Storage.travelSelectedIdx.get()
     this.setState({ travelSelectedIdx }, this.loadingFinish)
     return travelSelectedIdx
   }
