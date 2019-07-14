@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 
 import Controller, { navigator } from '../plugins/controller'
-import Login from './login'
 import Main from './main'
 
 class Index extends Component{

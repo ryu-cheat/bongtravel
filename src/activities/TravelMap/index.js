@@ -16,6 +16,8 @@ import {
 } from 'react-native';
 
 import MapView, { Marker, Polyline } from 'react-native-maps';
+import Controller, { navigator } from '../../plugins/controller'
+import WriteTravel from './WriteTravel'
 
 class Index extends Component{
   state = {
@@ -77,13 +79,32 @@ class Index extends Component{
               strokeWidth={6}
             />
           </MapView>
-
-          <TouchableOpacity style={style.writeTravelJournalButton}>
-            <Text style={style.writeTravelJournalButtonText}>여행일지 작성하기</Text>
-          </TouchableOpacity>
-
+          <WriteTravelButton travel={this.props.travel} />
         </View>
       </View>
+    )
+  }
+}
+
+// 작성중인 일지가 있는지 계속 확인해야하므로 컴포넌트를 분리한다
+class WriteTravelButton extends Component{
+  state = {
+
+  }
+
+  constructor(p) {
+    super(p)
+  }
+
+  write = () => {
+    navigator.push(<WriteTravel travel={this.props.travel}/>)
+  }
+
+  render(){
+    return (
+    <TouchableOpacity style={style.writeTravelJournalButton} onPress={this.write}>
+      <Text style={style.writeTravelJournalButtonText}>여행일지 작성하기</Text>
+    </TouchableOpacity>
     )
   }
 }

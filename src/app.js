@@ -23,6 +23,7 @@ import './plugins/sockets'
 
 import Navigator from './components/services/Navigator'
 import Splash from './splash'
+import Permissions from './permissions'
 import Activities from './activities/index'
 
 // 첫 구조에는 다른 컴포넌트들이 잘 끼어들 수 있도록 탭을 두번씩 넣어준다
@@ -33,9 +34,11 @@ const App = () => {
       <SafeAreaView style={style.flex1}>
 
           <Splash>
-            <Navigator>
-              <Activities />
-            </Navigator>
+              <Permissions>
+                  <Navigator>
+                      <Activities />
+                  </Navigator>
+              </Permissions>
           </Splash>
 
       </SafeAreaView>

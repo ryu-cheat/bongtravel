@@ -1,3 +1,4 @@
+// storage랑 헷갈리니깐 controller는 동사를 앞에 써주자
 
 // 여기선 인터페이스만 만들어준다
 function init(){ alert('초기화가 필요합니다'); }
@@ -18,6 +19,18 @@ const navigator = {
      popToTop: (): void => initPath('/src/components/services/Navigator.js'),
 }
 
+class activityController {
+     static main = {
+          loadTravels: (): Promise => initPath('/src/activities/main.js'),
+          loadTravelSelectedIdx: ():Promise<Number> => initPath('/src/activities/main.js'),
+          manageTravel: () => initPath('/src/activities/main.js'),
+     }
+}
+
+const writeTravel = { 
+     loadInputTabs: () => initPath('/src/activities/TravelMap/WriteTravel.js')
+}
+
 module.exports = {
      mainTab,
      splash,
@@ -25,4 +38,7 @@ module.exports = {
 
      init,
      initPath,
+     
+     activityController,
+     writeTravel,
 }
