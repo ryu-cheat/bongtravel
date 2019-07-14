@@ -28,9 +28,12 @@ const FastMarker = Animated.createAnimatedComponent(Marker)
 export default class WriteTravelInput extends Component{
   state = {
     _loaded: false,
+  }
+
+  input = {
+    inputTabKey: this.props.inputTab.key,
     myLatLng: this.props.myLatLng,
   }
-  input = { inputTabKey: this.props.inputTab.key }
   
   loadInputs = async() => {
     let { inputTab } = this.props
@@ -45,29 +48,25 @@ export default class WriteTravelInput extends Component{
       return resolve({ })
     })
 
-    this.input = input
-
-    let newState = { _loaded: true, myLatLng: this.state.myLatLng }
-    if (this.input.myLatLng) {
-      newState.myLatLng = this.input.myLatLng
+    this.input = {
+      ...this.input,
+      ...input,
     }
 
-
     this.markerCoordinate = new AnimatedRegion({
-      latitude: newState.myLatLng.lat,
-      longitude: newState.myLatLng.lng,
-      latitudeDelta: newState.myLatLng.latDelta,
-      longitudeDelta: newState.myLatLng.lngDelta,
+      latitude: this.input.myLatLng.lat,
+      longitude: this.input.myLatLng.lng,
+      latitudeDelta: this.input.myLatLng.latDelta,
+      longitudeDelta: this.input.myLatLng.lngDelta,
     })
 
-    this.setState(newState)
+    this.setState({ _loaded: true })
   }
   saveInput = async() => {
     let inputTabs = await travelWrite.InputTabs.get()
     let inputs = await travelWrite.Inputs.get()
     inputs = inputs.filter(input => input.inputTabKey != this.input.inputTabKey)
     inputs.push(this.input)
-    this.input.myLatLng = this.state.myLatLng
 
     inputTabs = inputTabs.filter(inputTab => inputTab.key != this.props.inputTab.key)
     inputTabs.push(this.props.inputTab)
@@ -91,7 +90,7 @@ export default class WriteTravelInput extends Component{
   }
 
   getRegion = () => {
-    let { myLatLng } = this.state
+    let { myLatLng } = this.input
     
     return {
       latitude: myLatLng.lat,
@@ -101,7 +100,7 @@ export default class WriteTravelInput extends Component{
     }
   }
 
-  onRegionChange = (coordinate) => {
+  onRegionChange = (coordinate) => { // (핀위치 [1])핀의 위치는 여기서 바꿔주고(계속호출됨)
     this.markerCoordinate.stopAnimation()
     this.markerCoordinate.timing({
       latitude: coordinate.latitude,
@@ -112,15 +111,13 @@ export default class WriteTravelInput extends Component{
       duration :0,
     }).start()
   }
-  onRegionChangeComplete = (coordinate) => {
-    this.setState({
-      myLatLng:{
-        lat:coordinate.latitude,
-        lng:coordinate.longitude,
-        latDelta:coordinate.latitudeDelta,
-        lngDelta:coordinate.longitudeDelta,
-      }
-    })
+  onRegionChangeComplete = (coordinate) => { // (핀위치 [2])지도에 선택된 위치는 여기서 저장해준다
+    this.input.myLatLng = {
+      lat:coordinate.latitude,
+      lng:coordinate.longitude,
+      latDelta:coordinate.latitudeDelta,
+      lngDelta:coordinate.longitudeDelta,
+    }
   }
 
   markerCoordinate = new AnimatedRegion()

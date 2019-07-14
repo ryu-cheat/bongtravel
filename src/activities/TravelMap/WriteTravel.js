@@ -121,6 +121,7 @@ export default class WriteTravel extends Component{
             {inputTabViews}
           </ScrollView>
         </View>
+        <View style={style.inputTabsScrollBottomLine}/>
         <WriteTravelInput key={selectedInputTabKey} inputTab={ selectedInputTab } myLatLng={myLatLng} />
       </View>
     )
@@ -166,5 +167,9 @@ const style = StyleSheet.create({
   },
   inputTabText:{
     fontSize:12,
+  },
+  inputTabsScrollBottomLine:{
+    height: 1,
+    backgroundColor:'#ffffff',
   },
 })
