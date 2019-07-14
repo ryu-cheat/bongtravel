@@ -42,6 +42,7 @@ export default class Main extends Component{
   loadTravelSelectedIdx = async() => {
     let travelSelectedIdx  = await Storage.travelSelectedIdx.get(0)
     this.setState({ travelSelectedIdx }, this.loadingFinish)
+    return travelSelectedIdx
   }
   loadTravels = async() => {
     // 추후 network통신으로 바꿀걸 대비하여 promise로 해두기
@@ -83,7 +84,7 @@ export default class Main extends Component{
         tabBarPosition={'bottom'}
         renderTabBar={()=><RenderTabBar />}>
         
-        {Tabs.map(( {2: TabComponent}, index ) => <TabComponent travels={ this.state.travels } key={index} />)}
+        {Tabs.map(( {0: tabId, 2: TabComponent}, index ) => <TabComponent travel={travel} key={tabId == 'home' ? `home:${travel.no}` : index} />)}
         
       </ScrollableTabView>
     </>

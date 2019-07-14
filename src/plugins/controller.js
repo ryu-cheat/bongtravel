@@ -20,8 +20,8 @@ const navigator = {
 
 class activityController {
      static main = {
-          loadTravels: () => initPath('/src/activities/main.js'),
-          loadTravelSelectedIdx: () => initPath('/src/activities/main.js'),
+          loadTravels: (): Promise => initPath('/src/activities/main.js'),
+          loadTravelSelectedIdx: ():Promise<Number> => initPath('/src/activities/main.js'),
           manageTravel: () => initPath('/src/activities/main.js'),
      }
 }
