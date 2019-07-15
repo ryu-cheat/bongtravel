@@ -21,6 +21,8 @@ import styled from 'styled-components/native'
 import MapView, { Marker, Polyline, AnimatedRegion } from 'react-native-maps';
 import Controller, { navigator, writeTravel } from '../../plugins/controller'
 import Storage, { travelWrite } from '../../plugins/storage'
+import ImagePicker from 'react-native-image-crop-picker';
+import Converter from '../../plugins/converter'
 const FastMarker = Animated.createAnimatedComponent(Marker)
 
 
@@ -30,9 +32,11 @@ export default class WriteTravelInput extends Component{
     _loaded: false,
   }
 
+/************************* [[시작]] 앱종료해도 입력한거, 업로드중이던 사진 유지하기 *************************/
   input = {
     inputTabKey: this.props.inputTab.key,
     myLatLng: this.props.myLatLng,
+    pictures:[],
   }
   
   loadInputs = async() => {
@@ -88,7 +92,9 @@ export default class WriteTravelInput extends Component{
 
     writeTravel.loadInputTabs()
   }
+/************************* [[끝]] 앱종료해도 입력한거, 업로드중이던 사진 유지하기 *************************/
 
+/************************* [[시작]] 사진 메타데이터 기반 + 현재위치 참조하여 지도 위치 설정해주기 *************************/
   getRegion = () => {
     let { myLatLng } = this.input
     
@@ -121,6 +127,39 @@ export default class WriteTravelInput extends Component{
   }
 
   markerCoordinate = new AnimatedRegion()
+/************************* [[끝]] 사진 메타데이터 기반 + 현재위치 참조하여 지도 위치 설정해주기 *************************/
+/************************* [[시작]] 여행 사진 *************************/
+  
+  renderPictures = () => {
+    let { pictures } = this.input
+    if (pictures.length == 0) {
+      return null
+    }else{
+      return (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={style.pictureScrollView}>
+          <View>
+            <Text>이미지</Text>
+          </View>
+        </ScrollView>
+      )
+    }
+  }
+  addPicture = () => {
+    ImagePicker.openPicker({
+      width: 400,
+      height: 400,
+      includeExif: true,
+      multiple: true,
+      cropping: true,
+
+    }).then(image => {
+      console.warn(image);
+      console.warn(Converter.geolocation.gpsToGeoPoint(image[0].exif.GPSLatitude))
+      console.warn(Converter.geolocation.gpsToGeoPoint(image[0].exif.GPSLongitude))
+    });
+  }
+
+/************************* [[시작]] 여행 사진 *************************/
 
   render(){
     let { _loaded } = this.state
@@ -142,6 +181,15 @@ export default class WriteTravelInput extends Component{
           description={'이 곳에 방문했어요 !'}
         />
       </MapView>
+      <View style={style.pictureWrapper}>
+        {this.renderpictures}
+        <View style={[style.pictureAdd, this.input.pictures.length == 0 && { flex: 1 }]}>
+          <TouchableOpacity style={style.pictureAddButton} onPress={this.addPicture}>
+            <Text style={style.pictureAddButtonText}>{'+'}</Text>
+            <Text style={style.pictureAddButtonText}>사진 추가</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   }
   componentDidMount(){
@@ -154,4 +202,27 @@ const style = StyleSheet.create({
   writeWrapper:{
     flex: 1,
   },
+
+  pictureWrapper:{
+    height: 100,
+    flexDirection: 'row',
+  },
+
+  pictureAdd:{
+    minWidth: 100,
+    padding:10,
+  },
+  pictureAddButton:{
+    alignItems:'center',
+    justifyContent:'center',
+    borderColor:'#000',
+    borderWidth:1,
+    flex: 1,
+  },
+
+  // renderPictures
+  pictureScrollView:{
+    flex: 1,
+  },
+
 })
