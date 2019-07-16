@@ -1,7 +1,10 @@
 let geolocation = {
      gpsToGeoPoint(gps: String){
-          let result = null;
-          let DMS = gps.split(",", 3);
+          if ( !gps ) {
+               return null
+          }
+          let result = null
+          let DMS = gps.split(",");
        
           let stringD = DMS[0].split("/");
           let D0 = +stringD[0];
@@ -21,6 +24,18 @@ let geolocation = {
           result = parseFloat(FloatD + (FloatM / 60) + (FloatS / 3600));
        
           return result;
+     },
+     date(DateTime: String, creationDate: Number): Date{
+          try{
+               if (!!DateTime) {
+                    let d = DateTime.split(' ').flatMap(d => d.split(':')).map(d => +d)
+                    return new Date(d[0],d[1]-1,d[2],d[3],d[4],d[5])
+               }else{
+                    return creationDate ? new Date( +creationDate ) : null
+               }
+          }catch(e){
+               return null
+          }
      }
 }
 
