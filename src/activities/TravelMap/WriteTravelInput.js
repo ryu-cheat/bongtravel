@@ -12,6 +12,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  TextInput,
   TouchableOpacity,
   Dimensions,
   Animated,
@@ -31,6 +32,7 @@ const FastMarker = Animated.createAnimatedComponent(Marker)
 
 export default class WriteTravelInput extends Component{
   state = {
+    dateKey: 0, //date에 이상한 값이 입력되었을 경우 초기화
     _loaded: false,
   }
   imageScrollView: ScrollView = null
@@ -147,6 +149,7 @@ export default class WriteTravelInput extends Component{
           }
         }
 
+        // 업로드 기능이 내장된 컴포넌트를 만들어서 사용한다
         _pictures.push(<TouchableOpacity key={picture.path} style={{ marginRight:10 }} onPress={onPress}>
           <Image source={{ uri: picture.path }} style={{
             width: 80,
@@ -169,6 +172,7 @@ export default class WriteTravelInput extends Component{
       multiple: true,
       cropping: true,
     }).then(async(pictures) => {
+      // 사진을 그냥 추가하는게아니라, 날짜 다른 사진이 있는지 확인해야되기 때문에, 임시저장 -> 비교 -> 필터 -> 저장 한다
       let _pictures = []
       let _differentDatePictures = {}
 
@@ -251,14 +255,48 @@ export default class WriteTravelInput extends Component{
 /************************* [[시작]] 여행 사진 *************************/
 
   render(){
-    let { _loaded } = this.state
+    let { _loaded, dateKey } = this.state
     if (!_loaded) return (<View />) // 나중에 로딩 뷰 띄우기
 
+    // 지도
     const { width } = Dimensions.get('window')
-
     let region = this.getRegion()
 
-    return <View style={style.writeWrapper}>
+    // 여행날짜
+    let D = new Date(this.input.date)
+    let travelDateString = [D.getFullYear(),D.getMonth()+1,D.getDate()].map(d=>d<10?'0'+d:''+d).join('/')
+    let travelDateTimeString = [D.getHours(),D.getMinutes(),D.getSeconds()].map(d=>d<10?'0'+d:''+d).join(':')
+    const onTravelDateChange = async(text: String, type: 'date'|'time') => {
+      let separator = type == 'date' ? '/' : ':'
+      let _text = text.replace(/[^0-9\-\:\/]/g,'')
+      if (text != _text) {
+        await alert('날짜/시간을 제대로 입력해주세요 !')
+        return this.setState({ dateKey: Math.random() })
+      }
+
+      let splited = text.split(separator)
+      
+      let D = new Date(this.input.date)
+      let nowDates = [D.getFullYear(),D.getMonth()+1,D.getDate()].map(d=>(d+'').padStart(2,'0'))
+      let nowTimes = [D.getHours(),D.getMinutes(),D.getSeconds()].map(d=>(d+'').padStart(2,'0'))
+
+      let newDate = null
+      if ( type == 'date' ) {
+        newDate = new Date(+splited[0],+splited[1]-1,+splited[2],+nowTimes[0],+nowTimes[1],+nowTimes[2]).getTime()
+      }else{
+        newDate = new Date(+nowDates[0],+nowDates[1]-1,+nowDates[2],+splited[0],+splited[1],+splited[2]).getTime()
+      }
+
+      if ( newDate ) {
+        this.input.date = newDate
+      }else{
+        this.setState({ dateKey: Math.random() })
+      }
+    }
+    const onTravelDateChangeComplete = () => this.setState({})
+
+    return <ScrollView style={style.writeWrapper} showsVerticalScrollIndicator={false}>
+      {/* 지도를 그려줍니다 */}
       <MapView
         region={region}
         onRegionChange={this.onRegionChange}
@@ -270,6 +308,8 @@ export default class WriteTravelInput extends Component{
           description={'이 곳에 방문했어요 !'}
         />
       </MapView>
+
+      {/* 사진을 추가해줍니다/추가된 사진을 보여줍니다 */}
       <View style={style.pictureWrapper}>
         {this.renderPictures()}
         <View style={[style.pictureAdd, this.input.pictures.length == 0 && { flex: 1 }]}>
@@ -279,7 +319,33 @@ export default class WriteTravelInput extends Component{
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+
+      {/* 여행날짜/시간 */}
+      <View style={style.travelDateWrapper}>
+        <View style={style.travelDate}>
+          <Text style={style.tavelDateTitle}>여행 날짜</Text>
+          <TextInput
+            defaultValue={travelDateString}
+            key={dateKey}
+            style={style.travelDateInput}
+            onChangeText={text => onTravelDateChange(text,'date')}
+            onBlur={onTravelDateChangeComplete}
+          />
+        </View>
+        <View style={{ width: 10, }}/>
+        <View style={style.travelDate}>
+          <Text style={style.tavelDateTitle}>여행 시간</Text>
+          <TextInput
+            defaultValue={travelDateTimeString}
+            key={dateKey}
+            style={style.travelDateInput}
+            onChangeText={text => onTravelDateChange(text,'time')}
+            onBlur={onTravelDateChangeComplete}
+          />
+        </View>
+      </View>
+
+    </ScrollView>
   }
   componentDidMount(){
     this.loadInputs()
@@ -313,6 +379,23 @@ const style = StyleSheet.create({
   pictureScrollView:{
     flex: 1,
     padding:10,
+  },
+
+  // travel date
+  travelDateWrapper:{
+    marginHorizontal: 10,
+    flexDirection:'row',
+  },
+  travelDate:{
+    flex: 1,
+  },
+  travelDateInput:{
+    marginTop: 5,
+    borderColor: '#e6e6e6',
+    borderWidth: 1,
+    fontSize: 16,
+    alignItems: 'center',
+    textAlign:'center',
   },
 
 })
