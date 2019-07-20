@@ -35,7 +35,7 @@ export default class WriteTravelInput extends Component{
     dateKey: 0, //date에 이상한 값이 입력되었을 경우 초기화
     _loaded: false,
   }
-  imageScrollView: ScrollView = null
+  pictureScrollView: ScrollView = null
 /************************* [[시작]] 앱종료해도 입력한거, 업로드중이던 사진 유지하기 *************************/
   input = {
     inputTabKey: this.props.inputTab.key,
@@ -113,8 +113,8 @@ export default class WriteTravelInput extends Component{
   onRegionChange = (coordinate) => { // (핀위치 [1])핀의 위치는 여기서 바꿔주고(계속호출됨)
     this.markerCoordinate.stopAnimation()
     this.markerCoordinate.timing({
-      latitude: coordinate.latitude,
-      longitude: coordinate.longitude,
+      latitude: coordinate.latitude || this.input.myLatLng.lat,
+      longitude: coordinate.longitude || this.input.myLatLng.lng,
       latitudeDelta: coordinate.latitudeDelta || this.input.myLatLng.latDelta,
       longitudeDelta: coordinate.longitudeDelta || this.input.myLatLng.lngDelta,
       delay: 0,
@@ -125,8 +125,8 @@ export default class WriteTravelInput extends Component{
     this.onRegionChange(coordinate)
     
     this.input.myLatLng = {
-      lat:coordinate.latitude,
-      lng:coordinate.longitude,
+      lat:coordinate.latitude || this.input.myLatLng.lat,
+      lng:coordinate.longitude || this.input.myLatLng.lng,
       latDelta:coordinate.latitudeDelta || this.input.myLatLng.latDelta,
       lngDelta:coordinate.longitudeDelta || this.input.myLatLng.lngDelta,
     }
@@ -143,14 +143,26 @@ export default class WriteTravelInput extends Component{
     }else{
       let _pictures = []
       for (let picture of pictures) {
+        // 사진 한 번 누르면 지도 위치를 사진위치로 변경
         const onPress = () => {
           if (picture.latitude) {
             this.onRegionChangeComplete({ latitude: picture.latitude, longitude: picture.longitude })
+            this.setState({})
+          }
+        }
+        // 사진을 길게 누르면 삭제할건지 띄우기
+        const onLongPress = async() => {
+          let result = await confirm('사진을 삭제하시겠습니까?')
+          if (result) {
+            this.input.pictures = this.input.pictures.filter(p => p != picture)
+            this.saveInput()
+            this.setState({})
           }
         }
 
-        // 업로드 기능이 내장된 컴포넌트를 만들어서 사용한다
-        _pictures.push(<TouchableOpacity key={picture.path} style={{ marginRight:10 }} onPress={onPress}>
+
+        // 업로드 기능이 내장된 컴포넌트를 만들어서 사용한다(미완)
+        _pictures.push(<TouchableOpacity key={picture.path} style={{ marginRight:10 }} onPress={onPress} onLongPress={onLongPress}>
           <Image source={{ uri: picture.path }} style={{
             width: 80,
             height: 80,
@@ -158,7 +170,7 @@ export default class WriteTravelInput extends Component{
         </TouchableOpacity>)
       }
       return (
-        <ScrollView ref={ref=>this.imageScrollView=ref} horizontal showsHorizontalScrollIndicator={false} style={style.pictureScrollView}>
+        <ScrollView ref={ref=>this.pictureScrollView=ref} horizontal showsHorizontalScrollIndicator={false} style={style.pictureScrollView}>
           {_pictures}
         </ScrollView>
       )
@@ -237,6 +249,8 @@ export default class WriteTravelInput extends Component{
       // 사진 배열 합치기
       this.input.pictures = this.input.pictures.concat(_pictures)
 
+      // 저장하기 !!
+      this.saveInput()
 
       // 마무리!! 다시 그려주기
       if (_toRegionData) {
@@ -245,10 +259,11 @@ export default class WriteTravelInput extends Component{
       this.setState({ },()=>{
         if (_pictures.length > 0) {
           setTimeout(()=>{
-            this.imageScrollView&&this.imageScrollView.scrollToEnd()
+            this.pictureScrollView&&this.pictureScrollView.scrollToEnd()
           }, 100)
         }
       })
+
     }).catch(e=>console.warn(e));
   }
 
