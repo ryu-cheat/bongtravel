@@ -29,7 +29,7 @@ import { alert, confirm } from '../../plugins/alert'
 const FastMarker = Animated.createAnimatedComponent(Marker)
 
 
-
+// WriteTravel에서 탭을 관리하고, 입력은 WriteTravelInput에서한다.
 export default class WriteTravelInput extends Component{
   state = {
     dateKey: 0, //date에 이상한 값이 입력되었을 경우 초기화
