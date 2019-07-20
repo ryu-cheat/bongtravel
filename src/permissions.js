@@ -31,18 +31,30 @@ export default class Splash extends Component{
   }
   checkPermission = async() => {
     try {
-      const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        this.permissionGranted()
-      } else {
-        const requestGrantedResult = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
-        if (requestGrantedResult.match('never')) {
-          this.permissionGranted()
-        }else{
-          Controller.splash.close()
-          this.checkPermission()
+      
+      const permissionRequestResult = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+      ])
+
+      let granted = true
+      for ( let permission of Object.keys(permissionRequestResult) ) {
+        if ( permissionRequestResult[permission] == 'granted' ) {
+        }else if ( permissionRequestResult[permission] == 'never_ask_again' ) {
+          alert('현재 ['+permission+'] 권한이 다시보지 않기로 되어있습니다.\n\n일부 기능이 제한될 수 있습니다.')
+        }else {
+          granted = false
+          break
         }
       }
+      if (granted) {
+        this.permissionGranted()
+      }else{
+        this.checkPermission()
+      }
+
     } catch (err) {
       this.permissionGranted()
     }
@@ -64,7 +76,10 @@ export default class Splash extends Component{
   }
   componentDidMount(){
     if (Platform.OS == 'android') {
+      Controller.splash.close()
       this.checkPermission()
+    }else{
+      this.permissionGranted()
     }
   }
 }

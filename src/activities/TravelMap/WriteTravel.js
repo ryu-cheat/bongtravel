@@ -72,6 +72,7 @@ export default class WriteTravel extends Component{
       this.addDefaultInputTabs()
     }else{
       let selectedInputTabKey = this.state.selectedInputTabKey
+      // 지금 선택한 탭이 지워졌다면 ..! 첫번째 탭 사용 !!
       if (inputTabs.filter(inputTab => inputTab.key == selectedInputTabKey).length == 0) {
         selectedInputTabKey =  inputTabs[0].key
       }
@@ -82,20 +83,51 @@ export default class WriteTravel extends Component{
       }, this.getMyLatLng)
     }
   }
-  addDefaultInputTabs = (D = new Date()) => {
+  addDefaultInputTabs = ( D = new Date() ) => {
     let dateString = [ D.getFullYear(), D.getMonth()+1, D.getDate() ].map(d => (d+'').length == 1 ? '0'+d : d ).join('-')
     let timeString = [ D.getHours(), D.getMinutes() ].map(d => (d+'').length == 1 ? '0'+d : d ).join(':')
 
-    let inputTabs = []
+    let inputTabs = this.state.inputTabs
     let inputTabKey = Math.random()+''
-    inputTabs.push({
-      name: '나의 여행일지',
+
+    let inputTab = {
+      name: dateString+' 여행',
       date: dateString+' '+timeString,
       key: inputTabKey
-    })
+    }
+    inputTabs.push(inputTab)
 
-    this.setState({ inputTabs, selectedInputTabKey: inputTabKey }, this.getMyLatLng)
+    // 새로운 탭이 추가되면 탭목록갱신 + 선택 탭을 이 탭으로
+    this.setState({ inputTab, inputTabs, selectedInputTabKey: inputTabKey }, this.getMyLatLng)
+
+    return { inputTab, inputTabKey, dateString, timeString }
   }
+
+  addInputTabs = async(D = new Date(), newInput = {}) => { // 기본 입력값 + storage에 자동 저장
+    let { inputTabKey, inputTab } = this.addDefaultInputTabs(D)
+
+    let inputTabs = await travelWrite.InputTabs.get()
+    let inputs = await travelWrite.Inputs.get()
+    let existedInput = inputs.filter(input => input.inputTabKey == inputTabKey)[0]
+    inputs = inputs.filter(input => input.inputTabKey != inputTabKey)
+
+    newInput.inputTabKey = inputTabKey
+
+    existedInput = {
+      ...existedInput,
+      ...newInput,
+    }
+    inputs.push(existedInput)
+
+    inputTabs = inputTabs.filter(inputTab => inputTab.key != inputTabKey)
+    inputTabs.push(inputTab)
+
+    await travelWrite.InputTabs.set(inputTabs)
+    await travelWrite.Inputs.set(inputs)
+
+    writeTravel.loadInputTabs()
+  }
+
   render(){
     let { _loaded, inputTabs, selectedInputTabKey, myLatLng } = this.state
     if (!_loaded) return (<View />) // 나중에 로딩 뷰 띄우기
