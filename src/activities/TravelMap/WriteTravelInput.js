@@ -148,6 +148,10 @@ export default class WriteTravelInput extends Component{
 /************************* [[시작]] 여행 사진 *************************/
   // 사진 그려주기
   renderPictures = () => {
+    // 중복된 이미지가 올라가지 않도록 필터
+    // path가 같으면 동일 사진으로 보고, path가 같은것의 첫번째 순서와 filter((picture))의 picture의 순서가 같은것만 남긴다
+    this.input.pictures = this.input.pictures.filter((picture, idx) => idx == this.input.pictures.findIndex(p=>p.path == picture.path))
+
     let { pictures } = this.input
     if (pictures.length == 0) {
       return null
