@@ -9,7 +9,7 @@
 import { StyleSheet } from 'react-native';
 
 
-const style = StyleSheet.create({
+export const travelInputStyle = StyleSheet.create({
   writeWrapper:{
     flex: 1,
   },
@@ -78,6 +78,41 @@ const style = StyleSheet.create({
 
 })
 
-module.exports = {
-  style,
-}
+export const travelStyle = StyleSheet.create({
+  writeWrapper:{
+    flex: 1,
+  },
+  inputTabsScrollWrapper:{
+    height: 50,
+    flexDirection:'row',
+    backgroundColor:'#eee',
+  },
+  inputTabsScroll:{
+    flex: 1,
+    paddingLeft: 10,
+  },
+  inputTab:{
+    marginRight: 10,
+    marginTop: 10,
+    alignItems:'center',
+    justifyContent:'center',
+    paddingHorizontal:10,
+    borderTopRightRadius:5,
+    borderTopLeftRadius:5,
+  },
+  inputTabText:{
+    fontSize:12,
+  },
+  inputTabsScrollBottomLine:{
+    height: 1,
+    backgroundColor:'#ffffff',
+  },
+
+  backButton:{
+    width:40,
+    justifyContent:'center',
+    alignItems:'center',
+    borderRadius:5,
+    backgroundColor:'#fff',
+  },
+})

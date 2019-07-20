@@ -27,7 +27,8 @@ import ImagePicker from 'react-native-image-crop-picker';
 import Converter from '../../plugins/converter'
 import { alert, confirm } from '../../plugins/alert'
 
-import { style } from './style'
+import { travelInputStyle } from './style'
+const style = travelInputStyle
 
 const FastMarker = Animated.createAnimatedComponent(Marker)
 
@@ -89,7 +90,7 @@ export default class WriteTravelInput extends Component{
       let defaultInputTabs = await travelWrite.InputTabs.get()
       let inputTabs = defaultInputTabs.filter(inputTab => inputTab.key != this.props.inputTab.key)
       // 삭제됐을때는 저장하면 안되기때문에, 갯수비교하여 갯수똑같으면 현재입력이 삭제된것이므로 저장안함
-      if  (defaultInputTabs.length == inputs.length) {
+      if  (defaultInputTabs.length == inputTabs.length) {
         inputTabs.push(this.props.inputTab)
         await travelWrite.InputTabs.set(inputTabs)
       }

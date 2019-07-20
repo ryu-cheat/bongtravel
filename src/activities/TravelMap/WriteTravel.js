@@ -23,6 +23,9 @@ import WriteTravelInput from './WriteTravelInput'
 
 import Geolocation from '@react-native-community/geolocation'
 
+import { travelStyle } from './style'
+const style = travelStyle
+
 // WriteTravel에서 탭을 관리하고, 입력은 WriteTravelInput에서한다.
 export default class WriteTravel extends Component{
   state = {
@@ -104,6 +107,8 @@ export default class WriteTravel extends Component{
     }
     inputTabs.push(inputTab)
 
+    await travelWrite.InputTabs.set(inputTabs)
+
     // 새로운 탭이 추가되면 탭목록갱신 + 선택 탭을 이 탭으로
     this.setState({ inputTab, inputTabs, selectedInputTabKey: inputTabKey }, this.getMyLatLng)
 
@@ -164,9 +169,14 @@ export default class WriteTravel extends Component{
           <TouchableOpacity onPress={()=>Controller.navigator.pop()} style={style.backButton}>
             <Text>{'<'}</Text>
           </TouchableOpacity>
-          <ScrollView contentContainerStyle={style.inputTabsScroll} horizontal showsHorizontalScrollIndicator={false} >
-            {inputTabViews}
-          </ScrollView>
+          <View style={{ flex: 1 }}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} >
+              {inputTabViews}
+            </ScrollView>
+          </View>
+          <TouchableOpacity onPress={()=>this.addDefaultInputTabs()} style={style.backButton}>
+            <Text>{'+'}</Text>
+          </TouchableOpacity>
         </View>
         <View style={style.inputTabsScrollBottomLine}/>
         <WriteTravelInput key={selectedInputTabKey} inputTab={ selectedInputTab } myLatLng={myLatLng} />
@@ -191,40 +201,3 @@ const InputTabText = styled.Text`
     font-weight: bold;
   `}
 `
-
-const style = StyleSheet.create({
-  writeWrapper:{
-    flex: 1,
-  },
-  inputTabsScrollWrapper:{
-    height: 50,
-    flexDirection:'row',
-    backgroundColor:'#eee',
-  },
-  inputTabsScroll:{
-    flex: 1,
-    paddingLeft: 10,
-  },
-  inputTab:{
-    marginRight: 10,
-    marginTop: 10,
-    alignItems:'center',
-    justifyContent:'center',
-    paddingHorizontal:10,
-    borderTopRightRadius:5,
-    borderTopLeftRadius:5,
-  },
-  inputTabText:{
-    fontSize:12,
-  },
-  inputTabsScrollBottomLine:{
-    height: 1,
-    backgroundColor:'#ffffff',
-  },
-
-  backButton:{
-    width:60,
-    justifyContent:'center',
-    alignItems:'center',
-  },
-})
