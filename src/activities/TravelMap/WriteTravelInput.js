@@ -85,7 +85,7 @@ export default class WriteTravelInput extends Component{
       }
     }
 
-    if (type == 'all' || type == 'input') {
+    if (type == 'all' || type == 'tab') {
       let defaultInputTabs = await travelWrite.InputTabs.get()
       let inputTabs = defaultInputTabs.filter(inputTab => inputTab.key != this.props.inputTab.key)
       // 삭제됐을때는 저장하면 안되기때문에, 갯수비교하여 갯수똑같으면 현재입력이 삭제된것이므로 저장안함
