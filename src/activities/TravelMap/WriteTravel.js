@@ -87,11 +87,8 @@ export default class WriteTravel extends Component{
       }, this.getMyLatLng)
     }
   }
-<<<<<<< Updated upstream
-=======
   
   // 기본 입력 탭을 추가한다.
->>>>>>> Stashed changes
   addDefaultInputTabs = ( D = new Date() ) => {
     let dateString = [ D.getFullYear(), D.getMonth()+1, D.getDate() ].map(d => (d+'').length == 1 ? '0'+d : d ).join('-')
     let timeString = [ D.getHours(), D.getMinutes() ].map(d => (d+'').length == 1 ? '0'+d : d ).join(':')
@@ -112,24 +109,6 @@ export default class WriteTravel extends Component{
     return { inputTab, inputTabKey, dateString, timeString }
   }
 
-<<<<<<< Updated upstream
-  addInputTabs = async(D = new Date(), newInput = {}) => { // 기본 입력값 + storage에 자동 저장
-    let { inputTabKey, inputTab } = this.addDefaultInputTabs(D)
-
-    let inputTabs = await travelWrite.InputTabs.get()
-    let inputs = await travelWrite.Inputs.get()
-    let existedInput = inputs.filter(input => input.inputTabKey == inputTabKey)[0]
-    inputs = inputs.filter(input => input.inputTabKey != inputTabKey)
-
-    newInput.inputTabKey = inputTabKey
-
-    existedInput = {
-      ...existedInput,
-      ...newInput,
-    }
-    inputs.push(existedInput)
-
-=======
   // 사진 여러장을 첨부했을때, 날짜가 다른 사진이 있다면, 여행일지 작성 탭을 여러개로 늘려주는데 그 때
   // 기본탭추가 + 들어갈내용 입력 후 저장한다.
   addInputTabs = async(D = new Date(), newInput = {}) => { // 기본 입력값 + storage에 자동 저장
@@ -149,7 +128,6 @@ export default class WriteTravel extends Component{
     }
     inputs.push(existedInput)
 
->>>>>>> Stashed changes
     inputTabs = inputTabs.filter(inputTab => inputTab.key != inputTabKey)
     inputTabs.push(inputTab)
 
