@@ -160,6 +160,9 @@ export default class WriteTravel extends Component{
     return (
       <View style={style.writeWrapper}>
         <View style={style.inputTabsScrollWrapper}>
+          <TouchableOpacity onPress={()=>Controller.navigator.pop()} style={style.backButton}>
+            <Text>뒤로가기</Text>
+          </TouchableOpacity>
           <ScrollView contentContainerStyle={style.inputTabsScroll} horizontal showsHorizontalScrollIndicator={false} >
             {inputTabViews}
           </ScrollView>
@@ -194,9 +197,11 @@ const style = StyleSheet.create({
   },
   inputTabsScrollWrapper:{
     height: 50,
+    flexDirection:'row',
     backgroundColor:'#eee',
   },
   inputTabsScroll:{
+    flex: 1,
     paddingLeft: 10,
   },
   inputTab:{
@@ -214,5 +219,11 @@ const style = StyleSheet.create({
   inputTabsScrollBottomLine:{
     height: 1,
     backgroundColor:'#ffffff',
+  },
+
+  backButton:{
+    width:60,
+    justifyContent:'center',
+    alignItems:'center',
   },
 })
