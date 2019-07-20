@@ -26,6 +26,9 @@ import Storage, { travelWrite } from '../../plugins/storage'
 import ImagePicker from 'react-native-image-crop-picker';
 import Converter from '../../plugins/converter'
 import { alert, confirm } from '../../plugins/alert'
+
+import { style } from './style'
+
 const FastMarker = Animated.createAnimatedComponent(Marker)
 
 
@@ -397,59 +400,3 @@ export default class WriteTravelInput extends Component{
     this.loadInputs()
   }
 }
-
-
-const style = StyleSheet.create({
-  writeWrapper:{
-    flex: 1,
-  },
-  writeScroll:{
-    flex: 1,
-  },
-
-  pictureWrapper:{
-    height: 100,
-    flexDirection: 'row',
-  },
-
-  pictureAdd:{
-    minWidth: 100,
-    padding:10,
-  },
-  pictureAddButton:{
-    alignItems:'center',
-    justifyContent:'center',
-    borderColor:'#000',
-    borderWidth:1,
-    flex: 1,
-  },
-
-  // renderPictures
-  pictureScrollView:{
-    flex: 1,
-    padding:10,
-  },
-
-  // travel date
-  travelDateWrapper:{
-    marginHorizontal: 10,
-    flexDirection:'row',
-  },
-  travelDate:{
-    flex: 1,
-  },
-  travelDateInput:{
-    marginTop: 5,
-    borderColor: '#e6e6e6',
-    borderWidth: 1,
-    fontSize: 16,
-    alignItems: 'center',
-    textAlign:'center',
-  },
-
-  travelTabTitleInputWrapper:{
-    marginHorizontal: 10,
-    marginTop:5,
-  },
-
-})
