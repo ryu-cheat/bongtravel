@@ -97,7 +97,7 @@ export default class WriteTravel extends Component{
     let inputTabKey = Math.random()+''
 
     let inputTab = {
-      name: dateString+' 여행',
+      title: dateString+' 여행',
       date: dateString+' '+timeString,
       key: inputTabKey
     }
@@ -152,7 +152,7 @@ export default class WriteTravel extends Component{
         selectedInputTab = inputTab
       }
       inputTabViews.push(<InputTab active={active} style={style.inputTab} key={inputTab.key} onPress={onPress}>
-        <InputTabText active={active} style={style.inputTabText}>{inputTab.name}</InputTabText>
+        <InputTabText active={active} style={style.inputTabText}>{inputTab.title}</InputTabText>
       </InputTab>)
     }
 

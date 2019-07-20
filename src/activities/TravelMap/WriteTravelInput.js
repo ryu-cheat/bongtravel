@@ -71,19 +71,20 @@ export default class WriteTravelInput extends Component{
 
     this.setState({ _loaded: true })
   }
-  saveInput = async() => {
-    let inputTabs = await travelWrite.InputTabs.get()
-    let inputs = await travelWrite.Inputs.get()
-    inputs = inputs.filter(input => input.inputTabKey != this.input.inputTabKey)
-    inputs.push(this.input)
+  saveInput = async(type = 'input'|'tab'|'all') => {
+    if (type == 'all' || type == 'input') {
+      let inputs = await travelWrite.Inputs.get()
+      inputs = inputs.filter(input => input.inputTabKey != this.input.inputTabKey)
+      inputs.push(this.input)
+      await travelWrite.Inputs.set(inputs)
+    }
 
-    inputTabs = inputTabs.filter(inputTab => inputTab.key != this.props.inputTab.key)
-    inputTabs.push(this.props.inputTab)
-
-    await travelWrite.InputTabs.set(inputTabs)
-    await travelWrite.Inputs.set(inputs)
-
-    writeTravel.loadInputTabs()
+    if (type == 'all' || type == 'input') {
+      let inputTabs = await travelWrite.InputTabs.get()
+      inputTabs = inputTabs.filter(inputTab => inputTab.key != this.props.inputTab.key)
+      inputTabs.push(this.props.inputTab)
+      await travelWrite.InputTabs.set(inputTabs)
+    }
   }
   removeInput = async() => { // saveInput랑 코드 중복. 어떻게 확장될 지 모르니 일단 그대로 두자
     let inputTabs = await travelWrite.InputTabs.get()
@@ -135,7 +136,7 @@ export default class WriteTravelInput extends Component{
   markerCoordinate = new AnimatedRegion()
 /************************* [[끝]] 사진 메타데이터 기반 + 현재위치 참조하여 지도 위치 설정해주기 *************************/
 /************************* [[시작]] 여행 사진 *************************/
-  
+  // 사진 그려주기
   renderPictures = () => {
     let { pictures } = this.input
     if (pictures.length == 0) {
@@ -155,7 +156,7 @@ export default class WriteTravelInput extends Component{
           let result = await confirm('사진을 삭제하시겠습니까?')
           if (result) {
             this.input.pictures = this.input.pictures.filter(p => p != picture)
-            this.saveInput()
+            this.saveInput('input')
             this.setState({})
           }
         }
@@ -176,6 +177,7 @@ export default class WriteTravelInput extends Component{
       )
     }
   }
+  // 사진추가하기
   addPicture = () => {
     ImagePicker.openPicker({
       width: 400,
@@ -250,7 +252,7 @@ export default class WriteTravelInput extends Component{
       this.input.pictures = this.input.pictures.concat(_pictures)
 
       // 저장하기 !!
-      this.saveInput()
+      this.saveInput('input')
 
       // 마무리!! 다시 그려주기
       if (_toRegionData) {
@@ -269,6 +271,19 @@ export default class WriteTravelInput extends Component{
 
 /************************* [[시작]] 여행 사진 *************************/
 
+  // 여행일지제목 바꿔주기
+  onTravelTabTitleChange = async() => {
+    let inputTabs = await travelWrite.InputTabs.get()
+    let inputTab = this.props.inputTab
+    inputTabs = inputTabs.filter(inputTab => inputTab.key != inputTab.key)
+    inputTabs.push(inputTab)
+
+    await travelWrite.InputTabs.set(inputTabs)
+
+    this.saveInput('tab')
+    writeTravel.loadInputTabs()
+  }
+
   render(){
     let { _loaded, dateKey } = this.state
     if (!_loaded) return (<View />) // 나중에 로딩 뷰 띄우기
@@ -281,6 +296,11 @@ export default class WriteTravelInput extends Component{
     let D = new Date(this.input.date)
     let travelDateString = [D.getFullYear(),D.getMonth()+1,D.getDate()].map(d=>d<10?'0'+d:''+d).join('/')
     let travelDateTimeString = [D.getHours(),D.getMinutes(),D.getSeconds()].map(d=>d<10?'0'+d:''+d).join(':')
+    
+    // 여행날짜를 날짜답게 뜨게하기
+    // travelDateString, travelDateTimeString 같이 뭔가 계산이 들어가는것들은 render안에서 같이 쓰게해준다.
+    // this.onTravelDateChange으로 분리해버리면 travelDateString코드를 한번 더 써야되는데, 이 코드를 정확하게 모르는 다른사람이 한쪽에서만 
+    // map(d=>d<10?'0'+d:''+d).join('/') 이걸 바꿔버리면 오류가 나기때문에
     const onTravelDateChange = async(text: String, type: 'date'|'time') => {
       let separator = type == 'date' ? '/' : ':'
       let _text = text.replace(/[^0-9\-\:\/]/g,'')
@@ -306,61 +326,72 @@ export default class WriteTravelInput extends Component{
         this.input.date = newDate
       }else{
         this.setState({ dateKey: Math.random() })
-      }
+      } 
     }
-    const onTravelDateChangeComplete = () => this.setState({})
 
-    return <ScrollView style={style.writeWrapper} showsVerticalScrollIndicator={false}>
-      {/* 지도를 그려줍니다 */}
-      <MapView
-        region={region}
-        onRegionChange={this.onRegionChange}
-        onRegionChangeComplete={this.onRegionChangeComplete}
-        style={{ width, height: width }}>
-        <FastMarker 
-          coordinate={this.markerCoordinate}
-          title={'여행 일지'}
-          description={'이 곳에 방문했어요 !'}
-        />
-      </MapView>
+    return (
+    <View style={style.writeWrapper}>
+      <ScrollView style={style.writeScroll} showsVerticalScrollIndicator={false}>
+        {/* 지도를 그려줍니다 */}
+        <MapView
+          region={region}
+          onRegionChange={this.onRegionChange}
+          onRegionChangeComplete={this.onRegionChangeComplete}
+          style={{ width, height: width }}>
+          <FastMarker 
+            coordinate={this.markerCoordinate}
+            title={'여행 일지'}
+            description={'이 곳에 방문했어요 !'}
+          />
+        </MapView>
 
-      {/* 사진을 추가해줍니다/추가된 사진을 보여줍니다 */}
-      <View style={style.pictureWrapper}>
-        {this.renderPictures()}
-        <View style={[style.pictureAdd, this.input.pictures.length == 0 && { flex: 1 }]}>
-          <TouchableOpacity style={style.pictureAddButton} onPress={this.addPicture}>
-            <Text style={style.pictureAddButtonText}>{'+'}</Text>
-            <Text style={style.pictureAddButtonText}>사진 추가</Text>
-          </TouchableOpacity>
+        {/* 사진을 추가해줍니다/추가된 사진을 보여줍니다 */}
+        <View style={style.pictureWrapper}>
+          {this.renderPictures()}
+          <View style={[style.pictureAdd, this.input.pictures.length == 0 && { flex: 1 }]}>
+            <TouchableOpacity style={style.pictureAddButton} onPress={this.addPicture}>
+              <Text style={style.pictureAddButtonText}>{'+'}</Text>
+              <Text style={style.pictureAddButtonText}>사진 추가</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
 
-      {/* 여행날짜/시간 */}
-      <View style={style.travelDateWrapper}>
-        <View style={style.travelDate}>
-          <Text style={style.tavelDateTitle}>여행 날짜</Text>
+        {/* 여행날짜/시간 */}
+        <View style={style.travelDateWrapper}>
+          <View style={style.travelDate}>
+            <Text style={style.tavelDateTitle}>여행 날짜</Text>
+            <TextInput
+              defaultValue={travelDateString}
+              key={dateKey}
+              style={style.travelDateInput}
+              onChangeText={text => onTravelDateChange(text,'date')}
+              onBlur={()=>this.saveInput('input')}
+            />
+          </View>
+          <View style={{ width: 10, }}/>
+          <View style={style.travelDate}>
+            <Text style={style.tavelDateTitle}>여행 시간</Text>
+            <TextInput
+              defaultValue={travelDateTimeString}
+              key={dateKey}
+              style={style.travelDateInput}
+              onChangeText={text => onTravelDateChange(text,'time')}
+              onBlur={()=>this.saveInput('input')}
+            />
+          </View>
+        </View>
+        <View style={style.travelTabTitleInputWrapper}>
+          <Text>여행일지 제목</Text>
           <TextInput
-            defaultValue={travelDateString}
+            defaultValue={this.props.inputTab.title}
             key={dateKey}
             style={style.travelDateInput}
-            onChangeText={text => onTravelDateChange(text,'date')}
-            onBlur={onTravelDateChangeComplete}
+            onChangeText={text => this.props.inputTab.title = text}
+            onBlur={() => this.onTravelTabTitleChange()}
           />
         </View>
-        <View style={{ width: 10, }}/>
-        <View style={style.travelDate}>
-          <Text style={style.tavelDateTitle}>여행 시간</Text>
-          <TextInput
-            defaultValue={travelDateTimeString}
-            key={dateKey}
-            style={style.travelDateInput}
-            onChangeText={text => onTravelDateChange(text,'time')}
-            onBlur={onTravelDateChangeComplete}
-          />
-        </View>
-      </View>
-
-    </ScrollView>
+      </ScrollView>
+    </View>)
   }
   componentDidMount(){
     this.loadInputs()
@@ -370,6 +401,9 @@ export default class WriteTravelInput extends Component{
 
 const style = StyleSheet.create({
   writeWrapper:{
+    flex: 1,
+  },
+  writeScroll:{
     flex: 1,
   },
 
@@ -411,6 +445,11 @@ const style = StyleSheet.create({
     fontSize: 16,
     alignItems: 'center',
     textAlign:'center',
+  },
+
+  travelTabTitleInputWrapper:{
+    marginHorizontal: 10,
+    marginTop:5,
   },
 
 })
