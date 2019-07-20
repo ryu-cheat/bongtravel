@@ -158,7 +158,7 @@ export default class WriteTravel extends Component{
         selectedInputTab = inputTab
       }
       inputTabViews.push(<InputTab active={active} style={style.inputTab} key={inputTab.key} onPress={onPress}>
-        <InputTabText active={active} style={style.inputTabText}>{inputTab.title}</InputTabText>
+        <InputTabText active={active} style={style.inputTabText}>{inputTab.title.trim() || '제목 없음'}</InputTabText>
       </InputTab>)
     }
 

@@ -272,6 +272,7 @@ export default class WriteTravelInput extends Component{
       if (_toRegionData) {
         this.onRegionChangeComplete(_toRegionData)
       }
+      await alert('중복된 사진을 제외한 모든 파일들이 추가되었습니다.\n\n사진을 길게 누르면 삭제할 수 있습니다.')
       this.setState({ },()=>{
         if (_pictures.length > 0) {
           setTimeout(()=>{
@@ -294,7 +295,20 @@ export default class WriteTravelInput extends Component{
 
   // 버튼 그려주기
   renderButtons = () => {
+    
+
+    // 입력버튼 활성화 하기 위한 조건
+    let writeActive = true
+    let { pictures } = this.input
+    let { inputTab } = this.props
+    if (pictures.length == 0) {
+      writeActive = false
+    }else if (inputTab.title.length == 0) {
+      writeActive = false
+    }
+
     const WriteTravelJournal = () => {
+      if (!writeActive) return;
       Controller.inputBlurFunction()
     };
     const DeleteTravelJournal = async() => {
@@ -315,9 +329,10 @@ export default class WriteTravelInput extends Component{
         }
       }
     };
+
     return (<View style={style.buttonWrapper}>
-      <TouchableOpacity style={[style.button, { backgroundColor:'#3772e9' }]} onPress={WriteTravelJournal}>
-        <Text style={[style.buttonText, { color:'#fff' }]}>작성 완료</Text>
+      <TouchableOpacity style={[style.button, { backgroundColor:writeActive?'#3772e9':'#e1e1e1' }]} onPress={WriteTravelJournal}>
+        <Text style={[style.buttonText, { color:writeActive?'#fff':'#000' }]}>작성 완료</Text>
       </TouchableOpacity>
       <TouchableOpacity style={[style.button, { backgroundColor:'#e1e1e1' }]} onPress={DeleteTravelJournal}>
         <Text style={[style.buttonText, { color:'#000' }]}>입력중인 일지 삭제</Text>
@@ -427,7 +442,7 @@ export default class WriteTravelInput extends Component{
             defaultValue={this.props.inputTab.title}
             key={dateKey}
             style={style.travelDateInput}
-            onChangeText={text => this.props.inputTab.title = text}
+            onChangeText={text => this.props.inputTab.title = text.trim()}
             onBlur={() => this.onTravelTabTitleChange()}
           />
         </View>
