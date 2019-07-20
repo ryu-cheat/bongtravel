@@ -65,7 +65,17 @@ const style = StyleSheet.create({
   buttonWrapper:{
     flexDirection:'row',
     padding:5,
-  }
+  },
+  button:{
+    flex:1,
+    padding:10,
+    alignItems:'center',
+  },
+  buttonText:{
+    fontSize: 13,
+  },
+
+
 })
 
 module.exports = {

@@ -31,6 +31,8 @@ const writeTravel = {
      loadInputTabs: () => initPath('/src/activities/TravelMap/WriteTravel.js')
 }
 
+const inputBlurFunction = () => initPath('/src/components/services/ForceInputBlur.js')
+
 module.exports = {
      mainTab,
      splash,
@@ -41,4 +43,8 @@ module.exports = {
      
      activityController,
      writeTravel,
+     
+     
+     // 그냥 함수
+     inputBlurFunction,
 }

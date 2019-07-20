@@ -89,11 +89,12 @@ export default class WriteTravel extends Component{
   }
   
   // 기본 입력 탭을 추가한다.
-  addDefaultInputTabs = ( D = new Date() ) => {
+  addDefaultInputTabs = async( D = new Date() ) => {
+    let inputTabs = await travelWrite.InputTabs.get()
+
     let dateString = [ D.getFullYear(), D.getMonth()+1, D.getDate() ].map(d => (d+'').length == 1 ? '0'+d : d ).join('-')
     let timeString = [ D.getHours(), D.getMinutes() ].map(d => (d+'').length == 1 ? '0'+d : d ).join(':')
 
-    let inputTabs = this.state.inputTabs
     let inputTabKey = Math.random()+''
 
     let inputTab = {
@@ -161,7 +162,7 @@ export default class WriteTravel extends Component{
       <View style={style.writeWrapper}>
         <View style={style.inputTabsScrollWrapper}>
           <TouchableOpacity onPress={()=>Controller.navigator.pop()} style={style.backButton}>
-            <Text>뒤로가기</Text>
+            <Text>{'<'}</Text>
           </TouchableOpacity>
           <ScrollView contentContainerStyle={style.inputTabsScroll} horizontal showsHorizontalScrollIndicator={false} >
             {inputTabViews}

@@ -76,17 +76,23 @@ export default class WriteTravelInput extends Component{
   }
   saveInput = async(type = 'input'|'tab'|'all') => {
     if (type == 'all' || type == 'input') {
-      let inputs = await travelWrite.Inputs.get()
-      inputs = inputs.filter(input => input.inputTabKey != this.input.inputTabKey)
-      inputs.push(this.input)
-      await travelWrite.Inputs.set(inputs)
+      let defaultInputs = await travelWrite.Inputs.get()
+      let inputs = defaultInputs.filter(input => input.inputTabKey != this.input.inputTabKey)
+      // 삭제됐을때는 저장하면 안되기때문에, 갯수비교하여 갯수똑같으면 현재입력이 삭제된것이므로 저장안함
+      if  (defaultInputs.length == inputs.length) {
+        inputs.push(this.input)
+        await travelWrite.Inputs.set(inputs)
+      }
     }
 
     if (type == 'all' || type == 'input') {
-      let inputTabs = await travelWrite.InputTabs.get()
-      inputTabs = inputTabs.filter(inputTab => inputTab.key != this.props.inputTab.key)
-      inputTabs.push(this.props.inputTab)
-      await travelWrite.InputTabs.set(inputTabs)
+      let defaultInputTabs = await travelWrite.InputTabs.get()
+      let inputTabs = defaultInputTabs.filter(inputTab => inputTab.key != this.props.inputTab.key)
+      // 삭제됐을때는 저장하면 안되기때문에, 갯수비교하여 갯수똑같으면 현재입력이 삭제된것이므로 저장안함
+      if  (defaultInputTabs.length == inputs.length) {
+        inputTabs.push(this.props.inputTab)
+        await travelWrite.InputTabs.set(inputTabs)
+      }
     }
   }
   removeInput = async() => { // saveInput랑 코드 중복. 어떻게 확장될 지 모르니 일단 그대로 두자
@@ -272,19 +278,53 @@ export default class WriteTravelInput extends Component{
     }).catch(e=>console.warn(e));
   }
 
-/************************* [[시작]] 여행 사진 *************************/
+/************************* [[끝]] 여행 사진 *************************/
+
 
   // 여행일지제목 바꿔주기
   onTravelTabTitleChange = async() => {
     let inputTabs = await travelWrite.InputTabs.get()
     let inputTab = this.props.inputTab
-    inputTabs = inputTabs.filter(inputTab => inputTab.key != inputTab.key)
+    inputTabs = inputTabs.filter(_inputTab => _inputTab.key != inputTab.key)
     inputTabs.push(inputTab)
 
     await travelWrite.InputTabs.set(inputTabs)
 
     this.saveInput('tab')
     writeTravel.loadInputTabs()
+  }
+
+  // 버튼 그려주기
+  renderButtons = () => {
+    const WriteTravelJournal = () => {
+      Controller.inputBlurFunction()
+    };
+    const DeleteTravelJournal = async() => {
+      Controller.inputBlurFunction()
+      if (await confirm('입력중인 일지를 삭제하시겠습니까?')) {
+        let inputs = await travelWrite.Inputs.get()
+        inputs = inputs.filter(input => input.inputTabKey != this.input.inputTabKey)
+        await travelWrite.Inputs.set(inputs)
+
+        let inputTabs = await travelWrite.InputTabs.get()
+        inputTabs = inputTabs.filter(inputTab => inputTab.key != this.props.inputTab.key)
+        await travelWrite.InputTabs.set(inputTabs)
+
+        if (inputTabs.length > 0) {
+          writeTravel.loadInputTabs()
+        }else{
+          Controller.navigator.pop()
+        }
+      }
+    };
+    return (<View style={style.buttonWrapper}>
+      <TouchableOpacity style={[style.button, { backgroundColor:'#3772e9' }]} onPress={WriteTravelJournal}>
+        <Text style={[style.buttonText, { color:'#fff' }]}>작성 완료</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[style.button, { backgroundColor:'#e1e1e1' }]} onPress={DeleteTravelJournal}>
+        <Text style={[style.buttonText, { color:'#000' }]}>입력중인 일지 삭제</Text>
+      </TouchableOpacity>
+    </View>)
   }
 
   render(){
@@ -394,6 +434,7 @@ export default class WriteTravelInput extends Component{
           />
         </View>
       </ScrollView>
+      {this.renderButtons()}
     </View>)
   }
   componentDidMount(){
