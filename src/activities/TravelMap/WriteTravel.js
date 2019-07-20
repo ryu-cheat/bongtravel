@@ -140,7 +140,7 @@ export default class WriteTravel extends Component{
     await travelWrite.InputTabs.set(inputTabs)
     await travelWrite.Inputs.set(inputs)
 
-    writeTravel.loadInputTabs()
+    this.loadInputTabs()
   }
 
   render(){

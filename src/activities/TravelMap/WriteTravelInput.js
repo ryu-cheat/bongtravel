@@ -78,21 +78,21 @@ export default class WriteTravelInput extends Component{
   saveInput = async(type = 'input'|'tab'|'all') => {
     if (type == 'all' || type == 'input') {
       let defaultInputs = await travelWrite.Inputs.get()
-      let inputs = defaultInputs.filter(input => input.inputTabKey != this.input.inputTabKey)
-      // 삭제됐을때는 저장하면 안되기때문에, 갯수비교하여 갯수똑같으면 현재입력이 삭제된것이므로 저장안함
-      if  (defaultInputs.length == inputs.length) {
-        inputs.push(this.input)
-        await travelWrite.Inputs.set(inputs)
+      let inputIndex = defaultInputs.findIndex(input => input.inputTabKey == this.input.inputTabKey)
+      // 삭제됐을때는 저장하면 안되기때문에, inedx 찾아보고 있으면 저장
+      if (inputIndex != -1) {
+        defaultInputs[inputIndex] = this.input
+        await travelWrite.Inputs.set(defaultInputs)
       }
     }
 
     if (type == 'all' || type == 'tab') {
       let defaultInputTabs = await travelWrite.InputTabs.get()
-      let inputTabs = defaultInputTabs.filter(inputTab => inputTab.key != this.props.inputTab.key)
-      // 삭제됐을때는 저장하면 안되기때문에, 갯수비교하여 갯수똑같으면 현재입력이 삭제된것이므로 저장안함
-      if  (defaultInputTabs.length == inputTabs.length) {
-        inputTabs.push(this.props.inputTab)
-        await travelWrite.InputTabs.set(inputTabs)
+      let inputTabIndex = defaultInputTabs.findIndex(inputTab => inputTab.key == this.props.inputTab.key)
+      // 삭제됐을때는 저장하면 안되기때문에, inedx 찾아보고 있으면 저장
+      if (inputTabIndex != -1) {
+        defaultInputTabs[inputTabIndex] = this.props.inputTab
+        await travelWrite.InputTabs.set(defaultInputTabs)
       }
     }
   }
@@ -284,14 +284,7 @@ export default class WriteTravelInput extends Component{
 
   // 여행일지제목 바꿔주기
   onTravelTabTitleChange = async() => {
-    let inputTabs = await travelWrite.InputTabs.get()
-    let inputTab = this.props.inputTab
-    inputTabs = inputTabs.filter(_inputTab => _inputTab.key != inputTab.key)
-    inputTabs.push(inputTab)
-
-    await travelWrite.InputTabs.set(inputTabs)
-
-    this.saveInput('tab')
+    await this.saveInput('tab')
     writeTravel.loadInputTabs()
   }
 
