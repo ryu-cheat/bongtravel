@@ -7,10 +7,9 @@
  */
 
 import React from 'react';
-import { TextInput } from 'react-native';
+import { TextInput, Keyboard } from 'react-native';
 
 import Controller from '../../plugins/controller'
-
 
 // 계속 유지되는 곳(app.js 등)에서 한 번만 호출한다.
 class ForceInputBlur extends React.Component{
@@ -19,6 +18,7 @@ class ForceInputBlur extends React.Component{
     Controller.inputBlurFunction = () => {
       let input: TextInput = this.refs.input
       input.focus()
+      Keyboard.dismiss()
       input.blur()
     }
   }
