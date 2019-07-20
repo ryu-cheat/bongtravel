@@ -23,6 +23,7 @@ import WriteTravelInput from './WriteTravelInput'
 
 import Geolocation from '@react-native-community/geolocation'
 
+// WriteTravel에서 탭을 관리하고, 입력은 WriteTravelInput에서한다.
 export default class WriteTravel extends Component{
   state = {
     _loaded: false,
@@ -34,6 +35,7 @@ export default class WriteTravel extends Component{
     super(p)
     writeTravel.loadInputTabs = this.loadInputTabs
   }
+  // 내 위치를 받아온다. (사진에 메타데이터가 없을때 기본 지도위치는 내 위치로 해준다)
   getMyLatLng = () => {
     const success = (position) => {
       const myLatLng = {
@@ -66,7 +68,9 @@ export default class WriteTravel extends Component{
 
     Geolocation.getCurrentPosition(success, error, options)
   }
-  loadInputTabs = async() => { // 마지막으로 저장된 목록을 불러오고, 저장된게 없으면 새로 추가한다.
+
+   // 마지막으로 저장된 목록을 불러오고, 저장된게 없으면 새로 추가한다.
+  loadInputTabs = async() => {
     let inputTabs = await travelWrite.InputTabs.get()
     if (inputTabs.length == 0) {
       this.addDefaultInputTabs()
@@ -83,6 +87,11 @@ export default class WriteTravel extends Component{
       }, this.getMyLatLng)
     }
   }
+<<<<<<< Updated upstream
+=======
+  
+  // 기본 입력 탭을 추가한다.
+>>>>>>> Stashed changes
   addDefaultInputTabs = ( D = new Date() ) => {
     let dateString = [ D.getFullYear(), D.getMonth()+1, D.getDate() ].map(d => (d+'').length == 1 ? '0'+d : d ).join('-')
     let timeString = [ D.getHours(), D.getMinutes() ].map(d => (d+'').length == 1 ? '0'+d : d ).join(':')
@@ -103,6 +112,7 @@ export default class WriteTravel extends Component{
     return { inputTab, inputTabKey, dateString, timeString }
   }
 
+<<<<<<< Updated upstream
   addInputTabs = async(D = new Date(), newInput = {}) => { // 기본 입력값 + storage에 자동 저장
     let { inputTabKey, inputTab } = this.addDefaultInputTabs(D)
 
@@ -119,6 +129,27 @@ export default class WriteTravel extends Component{
     }
     inputs.push(existedInput)
 
+=======
+  // 사진 여러장을 첨부했을때, 날짜가 다른 사진이 있다면, 여행일지 작성 탭을 여러개로 늘려주는데 그 때
+  // 기본탭추가 + 들어갈내용 입력 후 저장한다.
+  addInputTabs = async(D = new Date(), newInput = {}) => { // 기본 입력값 + storage에 자동 저장
+
+    let { inputTabKey, inputTab } = this.addDefaultInputTabs(D)
+
+    let inputTabs = await travelWrite.InputTabs.get()
+    let inputs = await travelWrite.Inputs.get()
+    let existedInput = inputs.filter(input => input.inputTabKey == inputTabKey)[0]
+    inputs = inputs.filter(input => input.inputTabKey != inputTabKey)
+
+    newInput.inputTabKey = inputTabKey
+
+    existedInput = {
+      ...existedInput,
+      ...newInput,
+    }
+    inputs.push(existedInput)
+
+>>>>>>> Stashed changes
     inputTabs = inputTabs.filter(inputTab => inputTab.key != inputTabKey)
     inputTabs.push(inputTab)
 
@@ -132,6 +163,7 @@ export default class WriteTravel extends Component{
     let { _loaded, inputTabs, selectedInputTabKey, myLatLng } = this.state
     if (!_loaded) return (<View />) // 나중에 로딩 뷰 띄우기
     
+    // 입력 탭을 만들어준다.
     let inputTabViews = []
     let selectedInputTab = null
     for (let inputTab of inputTabs) {
@@ -146,6 +178,7 @@ export default class WriteTravel extends Component{
       </InputTab>)
     }
 
+    // 탭을 만들어주고, 탭에맞는 입력폼(WriteTravelInput)을 띄워준다.
     return (
       <View style={style.writeWrapper}>
         <View style={style.inputTabsScrollWrapper}>
