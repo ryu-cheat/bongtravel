@@ -26,7 +26,7 @@ import Storage, { travelWrite } from '../../plugins/storage'
 import ImagePicker from 'react-native-image-crop-picker';
 import Converter from '../../plugins/converter'
 import { alert, confirm } from '../../plugins/alert'
-
+import { travel } from '../../api'
 import ImageViewWithUpload from './ImageViewWithUpload'
 import { travelInputStyle } from './style'
 const style = travelInputStyle
@@ -158,6 +158,7 @@ export default class WriteTravelInput extends Component{
       for (let picture of pictures) {
         // 사진 한 번 누르면 지도 위치를 사진위치로 변경
         const onPress = () => {
+          alert(picture.path)
           if (picture.latitude) {
             this.onRegionChangeComplete({ latitude: picture.latitude, longitude: picture.longitude })
             this.setState({})
@@ -174,6 +175,7 @@ export default class WriteTravelInput extends Component{
         }
         const Save = async() => {
           this.saveInput('input')
+          this.setState({ })
         }
 
         // 업로드 기능이 내장된 컴포넌트를 만들어서 사용한다(미완)
@@ -202,7 +204,7 @@ export default class WriteTravelInput extends Component{
       let _differentDatePictures = {}
 
       // 날짜는 아침 6시까지로 구분한다.
-      let _data = this.input.pictures.filter(p=>p.date).length>0?new Date(this.input.date-60*60*6*1000).toLocaleDateString():null
+      let _date = this.input.pictures.filter(p=>p.date).length>0?new Date(this.input.date-60*60*6*1000).toLocaleDateString():null
 
       for (let picture of pictures) {
         let latitude = Converter.geolocation.gpsToGeoPoint(picture.exif.GPSLatitude)
@@ -212,12 +214,12 @@ export default class WriteTravelInput extends Component{
 
         let pictureItem = { latitude, longitude, date, path }
         if (date) {
-          let DateLocaleString = new Date(this.input.date-60*60*6*1000).toLocaleDateString()
-          if (_data == null) {
-            _data = DateLocaleString
+          let DateLocaleString = new Date(date-60*60*6*1000).toLocaleDateString()
+          if (_date == null) {
+            _date = DateLocaleString
           } else {
-            if ( _data != DateLocaleString ) {
-              if ( _differentDatePictures[DateLocaleString]) {
+            if ( _date != DateLocaleString ) {
+              if ( !_differentDatePictures[DateLocaleString]) {
                 _differentDatePictures[DateLocaleString] = []
               }
               _differentDatePictures[DateLocaleString].push(pictureItem)
@@ -228,21 +230,23 @@ export default class WriteTravelInput extends Component{
         _pictures.push(pictureItem)
       }
       
+
       // 다른날짜의 사진이 있는지 확인
       let _differentDatePictureKeys = Object.keys(_differentDatePictures)
       let _toRegionData = null
-
-      if (_differentDatePictureKeys>0) {
-        if (await confirm('날짜가 다른 사진이 포함되어 있습니다.\n\n날짜가 다른 사진들은 새 탭으로 분리할까요?')) {
+      
+      if (_differentDatePictureKeys.length>0 && await confirm('날짜가 다른 사진이 포함되어 있습니다.\n\n날짜가 다른 사진들은 새 탭으로 분리할까요?')) {
+        // 다른 날짜로 분류된 사진들을 날짜별 새 탭에 넣어준다.
+        for (let key of _differentDatePictureKeys) {
+          _pictures = _pictures.filter(p => _differentDatePictures[key].indexOf(p) == -1)
           
-          for (let key of _differentDatePictureKeys) {
-            _pictures = _pictures.filter(p => _differentDatePictures[key].indexOf(p) == -1)
-
-            //_differentDatePictures[key] 이 배열을 돌려서 탭을 늘려준다.(미완성:코드추가필요)
+          let differentDatePictures = _differentDatePictures[key]
+          let minDate = null
+          for (let picture of differentDatePictures){
+            minDate = minDate == null ? picture.date : Math.min(picture.date, minDate)
           }
 
-        }else{
-          // await alert('분리하지않습니다')
+          await writeTravel.addInputTabs(new Date(minDate), { pictures: differentDatePictures, date: minDate })
         }
       }
 
@@ -278,7 +282,7 @@ export default class WriteTravelInput extends Component{
         }
       })
 
-    }).catch(e=>console.warn(e));
+    }).catch(e=>{  });
   }
 
 /************************* [[끝]] 여행 사진 *************************/
@@ -298,25 +302,44 @@ export default class WriteTravelInput extends Component{
     let writeActive = true
     let { pictures } = this.input
     let { inputTab } = this.props
+
+    let notUploadedPictures = pictures.filter(p => !p.uploaded)
+
     if (pictures.length == 0) {
+      writeActive = false
+    }else if (notUploadedPictures.length > 0) {
       writeActive = false
     }else if (inputTab.title.length == 0) {
       writeActive = false
     }
 
-    const WriteTravelJournal = () => {
+    const edit = inputTab.edit
+
+    // 작성하기 or 수정하기
+    const WriteTravelJournal = async() => {
+      if (notUploadedPictures.length > 0){
+        return alert('아직 업로드가 완료되지 않은 사진이 있습니다.\n\n해당 사진을 삭제하거나 업로드 완료 후 다시 시도해주세요.'+JSON.stringify(notUploadedPictures))
+      }
       if (!writeActive) return;
       Controller.inputBlurFunction()
+      if (await confirm(edit ? '수정 완료하시겠습니까?' : '작성하시겠습니까?')) {
+        travel.writeTravelJournal({
+          inputTab: inputTab,
+          input: this.input,
+        })
+      }
     };
+
+    // 삭제하기
     const DeleteTravelJournal = async() => {
       Controller.inputBlurFunction()
-      if (await confirm('입력중인 일지를 삭제하시겠습니까?')) {
+      if (await confirm(edit ? '이 일지를 삭제하시겠습니까?':'입력중인 일지를 삭제하시겠습니까?')) {
         let inputs = await travelWrite.Inputs.get()
-        inputs = inputs.filter(input => input.inputTabKey != this.input.inputTabKey)
+        inputs = inputs.filter(input => input.inputTabKey != inputTab.key)
         await travelWrite.Inputs.set(inputs)
 
         let inputTabs = await travelWrite.InputTabs.get()
-        inputTabs = inputTabs.filter(inputTab => inputTab.key != this.props.inputTab.key)
+        inputTabs = inputTabs.filter(_inputTab => _inputTab.key != inputTab.key)
         await travelWrite.InputTabs.set(inputTabs)
 
         if (inputTabs.length > 0) {
@@ -327,12 +350,13 @@ export default class WriteTravelInput extends Component{
       }
     };
 
+    // view
     return (<View style={style.buttonWrapper}>
       <TouchableOpacity style={[style.button, { backgroundColor:writeActive?'#3772e9':'#e1e1e1' }]} onPress={WriteTravelJournal}>
-        <Text style={[style.buttonText, { color:writeActive?'#fff':'#000' }]}>작성 완료</Text>
+        <Text style={[style.buttonText, { color:writeActive?'#fff':'#000' }]}>{edit ? '수정 완료' : '작성 완료'}</Text>
       </TouchableOpacity>
       <TouchableOpacity style={[style.button, { backgroundColor:'#e1e1e1' }]} onPress={DeleteTravelJournal}>
-        <Text style={[style.buttonText, { color:'#000' }]}>입력중인 일지 삭제</Text>
+        <Text style={[style.buttonText, { color:'#000' }]}>{edit ? '일지 삭제' : '입력중인 일지 삭제'}</Text>
       </TouchableOpacity>
     </View>)
   }

@@ -27,7 +27,6 @@ const style = imageViewWithUploadStyle
 
 export default class ImageViewWithUpload extends Component{
   state = {
-    _loaded: false,
     path: this.props.picture.path
   }
   
@@ -41,6 +40,8 @@ export default class ImageViewWithUpload extends Component{
     upload.uploadTravelPicture(this.state.path).then(rs=>{
       if (rs.success) {
         this.props.picture.path = config.picture+'/'+rs.path
+        this.props.picture.uploaded = true
+
         this.setState({ path: this.props.picture.path })
         this.props.save()
 
@@ -55,8 +56,8 @@ export default class ImageViewWithUpload extends Component{
   }
 
   render(){
-    let uploaded = /^http(s)?:\/\//.test(this.state.path)
-
+    let uploaded = this.props.picture.uploaded
+    
     return (<View style={style.wrapper}>
       <Image
         source={{ uri: this.state.path }}

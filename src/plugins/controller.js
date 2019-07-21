@@ -28,7 +28,8 @@ class activityController {
 }
 
 const writeTravel = { 
-     loadInputTabs: () => initPath('/src/activities/TravelMap/WriteTravel.js')
+     loadInputTabs: () => initPath('/src/activities/TravelMap/WriteTravel.js'),
+     addInputTabs: () => initPath('/src/activities/TravelMap/WriteTravel.js'),
 }
 
 const inputBlurFunction = () => initPath('/src/components/services/ForceInputBlur.js')

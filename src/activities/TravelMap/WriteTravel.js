@@ -20,7 +20,7 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import Controller, { navigator, writeTravel } from '../../plugins/controller'
 import Storage, { travelWrite } from '../../plugins/storage'
 import WriteTravelInput from './WriteTravelInput'
-
+import { alert, confirm } from '../../plugins/alert'
 import Geolocation from '@react-native-community/geolocation'
 
 import { travelStyle } from './style'
@@ -37,6 +37,7 @@ export default class WriteTravel extends Component{
   constructor(p){
     super(p)
     writeTravel.loadInputTabs = this.loadInputTabs
+    writeTravel.addInputTabs = this.addInputTabs
   }
   // 내 위치를 받아온다. (사진에 메타데이터가 없을때 기본 지도위치는 내 위치로 해준다)
   getMyLatLng = () => {
@@ -92,7 +93,7 @@ export default class WriteTravel extends Component{
   }
   
   // 기본 입력 탭을 추가한다.
-  addDefaultInputTabs = async( D = new Date() ) => {
+  addDefaultInputTabs = async( D = new Date(), selectedInputTabKey ) => {
     let inputTabs = await travelWrite.InputTabs.get()
 
     let dateString = [ D.getFullYear(), D.getMonth()+1, D.getDate() ].map(d => (d+'').length == 1 ? '0'+d : d ).join('-')
@@ -109,8 +110,9 @@ export default class WriteTravel extends Component{
 
     await travelWrite.InputTabs.set(inputTabs)
 
-    // 새로운 탭이 추가되면 탭목록갱신 + 선택 탭을 이 탭으로
-    this.setState({ inputTab, inputTabs, selectedInputTabKey: inputTabKey }, this.getMyLatLng)
+    if (!selectedInputTabKey) selectedInputTabKey = inputTabKey
+    // 새로운 탭이 추가되면 탭목록갱신
+    this.setState({ inputTab, inputTabs, selectedInputTabKey }, this.getMyLatLng)
 
     return { inputTab, inputTabKey, dateString, timeString }
   }
@@ -119,28 +121,17 @@ export default class WriteTravel extends Component{
   // 기본탭추가 + 들어갈내용 입력 후 저장한다.
   addInputTabs = async(D = new Date(), newInput = {}) => { // 기본 입력값 + storage에 자동 저장
 
-    let { inputTabKey, inputTab } = this.addDefaultInputTabs(D)
-
-    let inputTabs = await travelWrite.InputTabs.get()
-    let inputs = await travelWrite.Inputs.get()
-    let existedInput = inputs.filter(input => input.inputTabKey == inputTabKey)[0]
-    inputs = inputs.filter(input => input.inputTabKey != inputTabKey)
-
+    let { inputTabKey } = await this.addDefaultInputTabs(D, this.state.selectedInputTabKey)
     newInput.inputTabKey = inputTabKey
 
-    existedInput = {
-      ...existedInput,
-      ...newInput,
-    }
-    inputs.push(existedInput)
+    // inputs 목록에 새로운 내용 집어넣기
+    let inputs = await travelWrite.Inputs.get()
+    inputs = inputs.filter(input => input.inputTabKey != inputTabKey)
+    inputs.push(newInput)
 
-    inputTabs = inputTabs.filter(inputTab => inputTab.key != inputTabKey)
-    inputTabs.push(inputTab)
-
-    await travelWrite.InputTabs.set(inputTabs)
     await travelWrite.Inputs.set(inputs)
 
-    this.loadInputTabs()
+    await this.loadInputTabs()
   }
 
   render(){
