@@ -1,9 +1,15 @@
 const request = require('./request')
 
 
-export const writeTravelJournal = (body: Object = {}): Promise => {
+export const writeTravelJournal = (travelId, body: Object = {}): Promise => {
      return request.post({
-         path: `/travel/journal`,
+         path: `/travels/${travelId}/journal`,
          body,
      })
+}
+
+export const getTravels = (): Promise => {
+    return request.get({
+        path: `/travels`,
+    })
 }

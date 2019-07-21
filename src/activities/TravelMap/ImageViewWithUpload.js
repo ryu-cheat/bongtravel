@@ -24,7 +24,7 @@ import { upload } from '../../api'
 const config = require('../../config')
 const style = imageViewWithUploadStyle
 
-
+// 이미지를 자동으로 업로드한다.
 export default class ImageViewWithUpload extends Component{
   state = {
     path: this.props.picture.path

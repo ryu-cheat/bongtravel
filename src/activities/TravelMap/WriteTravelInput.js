@@ -92,6 +92,7 @@ export default class WriteTravelInput extends Component{
     if (type == 'all' || type == 'tab') {
       defaultInputTabs[inputTabIndex] = this.props.inputTab
       await travelWrite.InputTabs.set(defaultInputTabs)
+      await Controller.activityController.travel.loadTemplateWrites()
     }
   }
   removeInput = async() => { // saveInput랑 코드 중복. 어떻게 확장될 지 모르니 일단 그대로 두자
@@ -104,7 +105,7 @@ export default class WriteTravelInput extends Component{
     await travelWrite.InputTabs.set(inputTabs)
     await travelWrite.Inputs.set(inputs)
 
-    writeTravel.loadInputTabs()
+    await writeTravel.loadInputTabs()
   }
 /************************* [[끝]] 앱종료해도 입력한거, 업로드중이던 사진 유지하기 *************************/
 
@@ -343,8 +344,9 @@ export default class WriteTravelInput extends Component{
         await travelWrite.InputTabs.set(inputTabs)
 
         if (inputTabs.length > 0) {
-          writeTravel.loadInputTabs()
+          await writeTravel.loadInputTabs()
         }else{
+          await Controller.activityController.travel.loadTemplateWrites()
           Controller.navigator.pop()
         }
       }

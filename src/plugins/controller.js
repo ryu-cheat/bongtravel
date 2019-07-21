@@ -25,6 +25,9 @@ class activityController {
           loadTravelSelectedIdx: ():Promise<Number> => initPath('/src/activities/main.js'),
           manageTravel: () => initPath('/src/activities/main.js'),
      }
+     static travel = {
+          loadTemplateWrites: () => initPath('/src/activities/TravelMap/index.js'),
+     }
 }
 
 const writeTravel = { 

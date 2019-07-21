@@ -77,7 +77,7 @@ export default class WriteTravel extends Component{
   loadInputTabs = async() => {
     let inputTabs = await travelWrite.InputTabs.get()
     if (inputTabs.length == 0) {
-      this.addDefaultInputTabs()
+      await this.addDefaultInputTabs()
     }else{
       let selectedInputTabKey = this.state.selectedInputTabKey
       // 지금 선택한 탭이 지워졌다면 ..! 첫번째 탭 사용 !!
@@ -90,6 +90,7 @@ export default class WriteTravel extends Component{
         selectedInputTabKey,
       }, this.getMyLatLng)
     }
+    await Controller.activityController.travel.loadTemplateWrites()
   }
   
   // 기본 입력 탭을 추가한다.

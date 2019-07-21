@@ -16,10 +16,16 @@ import {
 } from 'react-native';
 
 import MapView, { Marker, Polyline } from 'react-native-maps';
-import Controller, { navigator } from '../../plugins/controller'
+import Controller, { navigator, activityController } from '../../plugins/controller'
 import WriteTravel from './WriteTravel'
+import {TravelMapStyle} from './style'
+import { travelWrite } from '../../plugins/storage'
 
-class Index extends Component{
+const style = TravelMapStyle
+
+export default TravelMapLoader = ({ travel }) => <TravelMap key={travel._id}/>
+
+class TravelMap extends Component{
   state = {
     visits: [],
     myLatLng: {
@@ -89,11 +95,20 @@ class Index extends Component{
 // 작성중인 일지가 있는지 계속 확인해야하므로 컴포넌트를 분리한다
 class WriteTravelButton extends Component{
   state = {
-
+    templateCount: 0,
   }
 
   constructor(p) {
     super(p)
+
+    activityController.travel.loadTemplateWrites = this.loadTemplateWrites
+  }
+
+  loadTemplateWrites = async() => {
+    let travelTabs = await travelWrite.InputTabs.get()
+    this.setState({
+      templateCount: travelTabs.length,
+    })
   }
 
   write = () => {
@@ -101,40 +116,18 @@ class WriteTravelButton extends Component{
   }
 
   render(){
+    let { templateCount } = this.state
+
     return (
     <TouchableOpacity style={style.writeTravelJournalButton} onPress={this.write}>
       <Text style={style.writeTravelJournalButtonText}>여행일지 작성하기</Text>
+      {templateCount>0 && <Text style={style.writeTravelJournalTemplateText}>(작성중 {templateCount}개)</Text>}
     </TouchableOpacity>
     )
   }
+
+  componentDidMount(){
+    this.loadTemplateWrites()
+  }
 }
 
-const style = StyleSheet.create({
-  flex1: { flex: 1 },
-  relative:{position:'relative'},
-  travelWrapper:{
-    flex: 1,
-  },
-
-  writeTravelJournalButton:{
-    position:'absolute',
-    right: 20,
-    bottom: 20,
-    
-    paddingHorizontal:15,
-    height: 40,
-    alignItems:'center',
-    flexDirection:'row',
-    backgroundColor:'#fff',
-    borderRadius: 20,
-  },
-
-  writeTravelJournalButtonText:{
-    fontSize: 13,
-    fontWeight:'bold',
-
-  },
-})
-
-
-export default Index;

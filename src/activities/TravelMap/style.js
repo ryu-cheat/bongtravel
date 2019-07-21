@@ -139,3 +139,87 @@ export const imageViewWithUploadStyle = StyleSheet.create({
   }
 
 })
+
+
+export const TravelMapStyle = StyleSheet.create({
+  flex1: { flex: 1 },
+  relative:{position:'relative'},
+  travelWrapper:{
+    flex: 1,
+  },
+
+  writeTravelJournalButton:{
+    position:'absolute',
+    right: 20,
+    bottom: 20,
+    
+    paddingHorizontal:15,
+    height: 40,
+    alignItems:'center',
+    flexDirection:'row',
+    backgroundColor:'#fff',
+    borderRadius: 20,
+  },
+
+  writeTravelJournalButtonText:{
+    fontSize: 13,
+    fontWeight:'bold',
+
+  },
+  writeTravelJournalTemplateText:{
+    color:'rgb(180,50,80)'
+  },
+})
+
+export const travelManageStyle = StyleSheet.create({
+
+  wrapper: {
+       flex: 1,
+  },
+
+  travelWrapper:{
+       flexDirection: 1,
+       alignItems: 'center',
+       flexDirection: 'row',
+       height: 55,
+  },
+
+  checkWrapper: {
+       width: 55,
+       alignSelf: 'stretch',
+       alignItems:'center',
+       justifyContent:'center',
+  },
+
+  travelTitleText: {
+       fontSize:15,
+       color: '#000',
+  },
+  travelDateText: {
+       fontSize: 11,
+       color: '#777'
+  },
+
+  title:{
+       height: 60,
+       paddingHorizontal:10,
+       flexDirection: 'row',
+       alignItems:'center',
+  },
+  titleText:{
+       flex:1,
+       textAlign:'center',
+       fontSize: 16,
+       color:'#000',
+  },
+
+  divider:{
+       height: 1,
+       backgroundColor:'#e1e1e1',
+  },
+  backButton:{
+       width:60,
+       alignItems:'center',
+       justifyContent:'center',
+  },
+})
