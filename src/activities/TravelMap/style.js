@@ -123,11 +123,19 @@ export const imageViewWithUploadStyle = StyleSheet.create({
     width: 80,
     height: 80,
     position: 'relative',
+    borderRadius: 5,
+    overflow: 'hidden',
   },
   size:{
     width: 80,
     height: 80,
   },
-
+  loading:{
+    position:'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    alignItems:'center',
+    justifyContent:'center',
+    backgroundColor:'rgba(0,0,0,.15)'
+  }
 
 })

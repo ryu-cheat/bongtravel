@@ -172,11 +172,13 @@ export default class WriteTravelInput extends Component{
             this.setState({})
           }
         }
-
+        const Save = async() => {
+          this.saveInput('input')
+        }
 
         // 업로드 기능이 내장된 컴포넌트를 만들어서 사용한다(미완)
         _pictures.push(<TouchableOpacity key={picture.path} style={{ marginRight:10 }} onPress={onPress} onLongPress={onLongPress}>
-          <ImageViewWithUpload picture={ picture } />
+          <ImageViewWithUpload save={Save} picture={ picture } />
         </TouchableOpacity>)
       }
       return (
