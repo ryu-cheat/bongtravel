@@ -116,3 +116,18 @@ export const travelStyle = StyleSheet.create({
     backgroundColor:'#fff',
   },
 })
+
+
+export const imageViewWithUploadStyle = StyleSheet.create({
+  wrapper:{
+    width: 80,
+    height: 80,
+    position: 'relative',
+  },
+  size:{
+    width: 80,
+    height: 80,
+  },
+
+
+})

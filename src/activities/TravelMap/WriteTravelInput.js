@@ -27,6 +27,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import Converter from '../../plugins/converter'
 import { alert, confirm } from '../../plugins/alert'
 
+import ImageViewWithUpload from './ImageViewWithUpload'
 import { travelInputStyle } from './style'
 const style = travelInputStyle
 
@@ -76,24 +77,21 @@ export default class WriteTravelInput extends Component{
     this.setState({ _loaded: true })
   }
   saveInput = async(type = 'input'|'tab'|'all') => {
+    let defaultInputTabs = await travelWrite.InputTabs.get()
+    let inputTabIndex = defaultInputTabs.findIndex(inputTab => inputTab.key == this.props.inputTab.key)
+    // 삭제됐을때는 저장하면 안되기때문에, inedx 찾아보고 있으면 저장
+    if (inputTabIndex == -1) return;
+
     if (type == 'all' || type == 'input') {
       let defaultInputs = await travelWrite.Inputs.get()
-      let inputIndex = defaultInputs.findIndex(input => input.inputTabKey == this.input.inputTabKey)
-      // 삭제됐을때는 저장하면 안되기때문에, inedx 찾아보고 있으면 저장
-      if (inputIndex != -1) {
-        defaultInputs[inputIndex] = this.input
-        await travelWrite.Inputs.set(defaultInputs)
-      }
+      let inputs = defaultInputs.filter(input => input.inputTabKey != this.input.inputTabKey)
+      inputs.push(this.input)
+      await travelWrite.Inputs.set(inputs)
     }
 
     if (type == 'all' || type == 'tab') {
-      let defaultInputTabs = await travelWrite.InputTabs.get()
-      let inputTabIndex = defaultInputTabs.findIndex(inputTab => inputTab.key == this.props.inputTab.key)
-      // 삭제됐을때는 저장하면 안되기때문에, inedx 찾아보고 있으면 저장
-      if (inputTabIndex != -1) {
-        defaultInputTabs[inputTabIndex] = this.props.inputTab
-        await travelWrite.InputTabs.set(defaultInputTabs)
-      }
+      defaultInputTabs[inputTabIndex] = this.props.inputTab
+      await travelWrite.InputTabs.set(defaultInputTabs)
     }
   }
   removeInput = async() => { // saveInput랑 코드 중복. 어떻게 확장될 지 모르니 일단 그대로 두자
@@ -178,10 +176,7 @@ export default class WriteTravelInput extends Component{
 
         // 업로드 기능이 내장된 컴포넌트를 만들어서 사용한다(미완)
         _pictures.push(<TouchableOpacity key={picture.path} style={{ marginRight:10 }} onPress={onPress} onLongPress={onLongPress}>
-          <Image source={{ uri: picture.path }} style={{
-            width: 80,
-            height: 80,
-          }}/>
+          <ImageViewWithUpload picture={ picture } />
         </TouchableOpacity>)
       }
       return (

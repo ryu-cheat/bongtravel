@@ -20,6 +20,7 @@ import './plugins/controller'
 import './plugins/lang'
 import './plugins/workpool'
 import './plugins/sockets'
+import './plugins/workpool'
 
 import Navigator from './components/services/Navigator'
 import Splash from './splash'
