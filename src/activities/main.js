@@ -19,6 +19,9 @@ import Storage from '../plugins/storage'
 import Controller, { activityController } from '../plugins/controller'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 import TravelMap from './TravelMap'
+import TravelManage from './TravelMap/TravelManage'
+import { TravelMainLoadFinishCheck } from '../plugins/workpool'
+import { travel } from '../api'
 
 const Tabs = [
   ['home','홈', TravelMap],
@@ -36,38 +39,42 @@ export default class Main extends Component{
   constructor (p) {
     super(p)
     activityController.main.loadTravels = this.loadTravels
-    activityController.main.loadTravels = this.loadTravels
+    activityController.main.loadTravelSelectedIdx = this.loadTravelSelectedIdx
     activityController.main.manageTravel = this.manageTravel
+
+
+
+    TravelMainLoadFinishCheck.work(this.loadTravels)
+    TravelMainLoadFinishCheck.work(this.loadTravelSelectedIdx)
+    TravelMainLoadFinishCheck.finish(()=>{
+      this.setState({
+        _loaded: true
+      })
+    })
   }
-  loadTravelSelectedIdx = async() => {
+  loadTravelSelectedIdx = async(next) => {
     let travelSelectedIdx  = await Storage.travelSelectedIdx.get()
-    this.setState({ travelSelectedIdx }, this.loadingFinish)
+    this.setState({ travelSelectedIdx }, next)
     return travelSelectedIdx
   }
-  loadTravels = async() => {
+  loadTravels = async(next) => {
     // 추후 network통신으로 바꿀걸 대비하여 promise로 해두기
-    let travels  = await new Promise(resolve => {
-      resolve([
-        { no: 1, name: '2019년 제주도여행' },
-        { no: 2, name: '2019년 다낭여행' },
-      ])
-    })
-    this.setState({ travels }, this.loadingFinish)
+    let { travels } = await travel.getTravels()
+    // let travels  = await new Promise(resolve => {
+    //   resolve([
+    //     { no: 1, name: '2019년 제주도여행' },
+    //     { no: 2, name: '2019년 다낭여행' },
+    //     { no: 3, name: '2019년 다낭여행' },
+    //     { no: 4, name: '2019년 다낭여행' },
+    //   ])
+    // })
+    this.setState({ travels }, next)
     return travels
   }
-  loadingFinish = () => {
-    let { _loaded, travels, travelSelectedIdx } = this.state
-    if (!_loaded) {
-      if (travels.length > 0 && travelSelectedIdx != -1) {
-        this.setState({
-          _loaded: true
-        })
-      }
-    }
-  }
+
   manageTravel = () => {
     let { travels, travelSelectedIdx } = this.state
-
+    Controller.navigator.push(<TravelManage />)
   }
 
   render(){
@@ -75,24 +82,20 @@ export default class Main extends Component{
     if (!_loaded) return (<View />) // 나중에 로딩 뷰 띄우기
 
     let travel = travels[ travelSelectedIdx ]
-
     return (
     <>
       <Header travel={ travel } />
+
       <ScrollableTabView
         style={style.flex1}
         tabBarPosition={'bottom'}
         renderTabBar={()=><RenderTabBar />}>
         
-        {Tabs.map(( {0: tabId, 2: TabComponent}, index ) => <TabComponent travel={travel} key={tabId == 'home' ? `home:${travel.no}` : index} />)}
+        {Tabs.map(( {0: tabId, 2: TabComponent}, index ) => <TabComponent travel={travel} key={index} />)}
         
       </ScrollableTabView>
     </>
     )
-  }
-  componentDidMount(){
-    this.loadTravels()
-    this.loadTravelSelectedIdx()
   }
 }
 
@@ -141,7 +144,7 @@ class Header extends Component{
       let { travel } = this.props
       return (
         <View style={style.header_wrapper}>
-          <Text style={style.header_title}>{travel.name}</Text>
+          <Text style={style.header_title}>{travel.title}</Text>
           <TouchableOpacity style={style.header_button} onPress={activityController.main.manageTravel}>
             <Text style={style.header_button_text}>여행관리</Text>
           </TouchableOpacity>

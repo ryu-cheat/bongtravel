@@ -31,16 +31,22 @@ class Navigator extends Component{
   push = (scene) => {
     let { navigation } = this.props
     navigation.push('Navigator', { scene })
+    
+    Controller.inputBlurFunction()
   }
 
   pop = () => {
     let { navigation } = this.props
     navigation.pop()
+    
+    Controller.inputBlurFunction()
   }
 
   popToTop = () => {
     let { navigation } = this.props
     navigation.popToTop()
+    
+    Controller.inputBlurFunction()
   }
 
   render(){

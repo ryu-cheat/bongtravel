@@ -20,8 +20,11 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import Controller, { navigator, writeTravel } from '../../plugins/controller'
 import Storage, { travelWrite } from '../../plugins/storage'
 import WriteTravelInput from './WriteTravelInput'
-
+import { alert, confirm } from '../../plugins/alert'
 import Geolocation from '@react-native-community/geolocation'
+
+import { travelStyle } from './style'
+const style = travelStyle
 
 // WriteTravel에서 탭을 관리하고, 입력은 WriteTravelInput에서한다.
 export default class WriteTravel extends Component{
@@ -34,6 +37,7 @@ export default class WriteTravel extends Component{
   constructor(p){
     super(p)
     writeTravel.loadInputTabs = this.loadInputTabs
+    writeTravel.addInputTabs = this.addInputTabs
   }
   // 내 위치를 받아온다. (사진에 메타데이터가 없을때 기본 지도위치는 내 위치로 해준다)
   getMyLatLng = () => {
@@ -73,7 +77,7 @@ export default class WriteTravel extends Component{
   loadInputTabs = async() => {
     let inputTabs = await travelWrite.InputTabs.get()
     if (inputTabs.length == 0) {
-      this.addDefaultInputTabs()
+      await this.addDefaultInputTabs()
     }else{
       let selectedInputTabKey = this.state.selectedInputTabKey
       // 지금 선택한 탭이 지워졌다면 ..! 첫번째 탭 사용 !!
@@ -86,25 +90,30 @@ export default class WriteTravel extends Component{
         selectedInputTabKey,
       }, this.getMyLatLng)
     }
+    await Controller.activityController.travel.loadTemplateWrites()
   }
   
   // 기본 입력 탭을 추가한다.
-  addDefaultInputTabs = ( D = new Date() ) => {
+  addDefaultInputTabs = async( D = new Date(), selectedInputTabKey ) => {
+    let inputTabs = await travelWrite.InputTabs.get()
+
     let dateString = [ D.getFullYear(), D.getMonth()+1, D.getDate() ].map(d => (d+'').length == 1 ? '0'+d : d ).join('-')
     let timeString = [ D.getHours(), D.getMinutes() ].map(d => (d+'').length == 1 ? '0'+d : d ).join(':')
 
-    let inputTabs = this.state.inputTabs
     let inputTabKey = Math.random()+''
 
     let inputTab = {
-      name: dateString+' 여행',
+      title: dateString+' 여행',
       date: dateString+' '+timeString,
       key: inputTabKey
     }
     inputTabs.push(inputTab)
 
-    // 새로운 탭이 추가되면 탭목록갱신 + 선택 탭을 이 탭으로
-    this.setState({ inputTab, inputTabs, selectedInputTabKey: inputTabKey }, this.getMyLatLng)
+    await travelWrite.InputTabs.set(inputTabs)
+
+    if (!selectedInputTabKey) selectedInputTabKey = inputTabKey
+    // 새로운 탭이 추가되면 탭목록갱신
+    this.setState({ inputTab, inputTabs, selectedInputTabKey }, this.getMyLatLng)
 
     return { inputTab, inputTabKey, dateString, timeString }
   }
@@ -113,28 +122,17 @@ export default class WriteTravel extends Component{
   // 기본탭추가 + 들어갈내용 입력 후 저장한다.
   addInputTabs = async(D = new Date(), newInput = {}) => { // 기본 입력값 + storage에 자동 저장
 
-    let { inputTabKey, inputTab } = this.addDefaultInputTabs(D)
-
-    let inputTabs = await travelWrite.InputTabs.get()
-    let inputs = await travelWrite.Inputs.get()
-    let existedInput = inputs.filter(input => input.inputTabKey == inputTabKey)[0]
-    inputs = inputs.filter(input => input.inputTabKey != inputTabKey)
-
+    let { inputTabKey } = await this.addDefaultInputTabs(D, this.state.selectedInputTabKey)
     newInput.inputTabKey = inputTabKey
 
-    existedInput = {
-      ...existedInput,
-      ...newInput,
-    }
-    inputs.push(existedInput)
+    // inputs 목록에 새로운 내용 집어넣기
+    let inputs = await travelWrite.Inputs.get()
+    inputs = inputs.filter(input => input.inputTabKey != inputTabKey)
+    inputs.push(newInput)
 
-    inputTabs = inputTabs.filter(inputTab => inputTab.key != inputTabKey)
-    inputTabs.push(inputTab)
-
-    await travelWrite.InputTabs.set(inputTabs)
     await travelWrite.Inputs.set(inputs)
 
-    writeTravel.loadInputTabs()
+    await this.loadInputTabs()
   }
 
   render(){
@@ -152,7 +150,7 @@ export default class WriteTravel extends Component{
         selectedInputTab = inputTab
       }
       inputTabViews.push(<InputTab active={active} style={style.inputTab} key={inputTab.key} onPress={onPress}>
-        <InputTabText active={active} style={style.inputTabText}>{inputTab.name}</InputTabText>
+        <InputTabText active={active} style={style.inputTabText}>{inputTab.title.trim() || '제목 없음'}</InputTabText>
       </InputTab>)
     }
 
@@ -160,9 +158,17 @@ export default class WriteTravel extends Component{
     return (
       <View style={style.writeWrapper}>
         <View style={style.inputTabsScrollWrapper}>
-          <ScrollView contentContainerStyle={style.inputTabsScroll} horizontal showsHorizontalScrollIndicator={false} >
-            {inputTabViews}
-          </ScrollView>
+          <TouchableOpacity onPress={()=>Controller.navigator.pop()} style={style.backButton}>
+            <Text>{'<'}</Text>
+          </TouchableOpacity>
+          <View style={{ flex: 1 }}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} >
+              {inputTabViews}
+            </ScrollView>
+          </View>
+          <TouchableOpacity onPress={()=>this.addDefaultInputTabs()} style={style.backButton}>
+            <Text>{'+'}</Text>
+          </TouchableOpacity>
         </View>
         <View style={style.inputTabsScrollBottomLine}/>
         <WriteTravelInput key={selectedInputTabKey} inputTab={ selectedInputTab } myLatLng={myLatLng} />
@@ -187,32 +193,3 @@ const InputTabText = styled.Text`
     font-weight: bold;
   `}
 `
-
-const style = StyleSheet.create({
-  writeWrapper:{
-    flex: 1,
-  },
-  inputTabsScrollWrapper:{
-    height: 50,
-    backgroundColor:'#eee',
-  },
-  inputTabsScroll:{
-    paddingLeft: 10,
-  },
-  inputTab:{
-    marginRight: 10,
-    marginTop: 10,
-    alignItems:'center',
-    justifyContent:'center',
-    paddingHorizontal:10,
-    borderTopRightRadius:5,
-    borderTopLeftRadius:5,
-  },
-  inputTabText:{
-    fontSize:12,
-  },
-  inputTabsScrollBottomLine:{
-    height: 1,
-    backgroundColor:'#ffffff',
-  },
-})

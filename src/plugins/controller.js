@@ -25,11 +25,17 @@ class activityController {
           loadTravelSelectedIdx: ():Promise<Number> => initPath('/src/activities/main.js'),
           manageTravel: () => initPath('/src/activities/main.js'),
      }
+     static travel = {
+          loadTemplateWrites: () => initPath('/src/activities/TravelMap/index.js'),
+     }
 }
 
 const writeTravel = { 
-     loadInputTabs: () => initPath('/src/activities/TravelMap/WriteTravel.js')
+     loadInputTabs: () => initPath('/src/activities/TravelMap/WriteTravel.js'),
+     addInputTabs: () => initPath('/src/activities/TravelMap/WriteTravel.js'),
 }
+
+const inputBlurFunction = () => initPath('/src/components/services/ForceInputBlur.js')
 
 module.exports = {
      mainTab,
@@ -41,4 +47,8 @@ module.exports = {
      
      activityController,
      writeTravel,
+     
+     
+     // 그냥 함수
+     inputBlurFunction,
 }
