@@ -13,3 +13,9 @@ export const getTravels = (): Promise => {
         path: `/travels`,
     })
 }
+
+export const deleteTravels = (travelId): Promise => {
+    return request.delete({
+        path: `/travels/${travelId}`,
+    })
+}

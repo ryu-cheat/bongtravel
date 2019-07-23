@@ -183,6 +183,16 @@ export const travelManageStyle = StyleSheet.create({
        flexDirection: 'row',
        height: 55,
   },
+  travelManageButtons:{
+    flexDirection:'row',
+  },
+  travelManageButton:{
+    flex:1,
+    alignItems:'center',
+    justifyContent:'center',
+    paddingVertical:12,
+    flexDirection:'row',
+  },
 
   checkWrapper: {
        width: 55,
@@ -190,7 +200,24 @@ export const travelManageStyle = StyleSheet.create({
        alignItems:'center',
        justifyContent:'center',
   },
-
+  selectButton: {
+       width: 75,
+       alignSelf: 'stretch',
+       alignItems:'center',
+       justifyContent:'center',
+  },
+  travelManageButtonText:{
+    fontSize:12,
+    color:'#999'
+  },
+  travelItem:{
+    backgroundColor:'#fff',
+    marginVertical:8,
+    marginHorizontal:16,
+    borderRadius:5,
+    borderColor:'#ddd',
+    borderWidth:1,
+  },
   travelTitleText: {
        fontSize:15,
        color: '#000',
@@ -202,7 +229,6 @@ export const travelManageStyle = StyleSheet.create({
 
   title:{
        height: 60,
-       paddingHorizontal:10,
        flexDirection: 'row',
        alignItems:'center',
   },
@@ -218,7 +244,8 @@ export const travelManageStyle = StyleSheet.create({
        backgroundColor:'#e1e1e1',
   },
   backButton:{
-       width:60,
+       width:50,
+       alignSelf:'stretch',
        alignItems:'center',
        justifyContent:'center',
   },
