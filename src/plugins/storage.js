@@ -2,12 +2,21 @@
 
 const { useAsyncStorage } = require('@react-native-community/async-storage')
 
+const storages = {}
+
 const createStorage = function ( key, { set, get } ) {
+     if ( storages[key] ) {
+          return storages[key]
+     }
+
      const storage = useAsyncStorage('@bongtravel_v1:' + key)
      let functions = { set: (value): Promise<Object> => {}, get: (): Promise<Object> => {} } // vscode 자동완성을 위해 인터페이스 정의
 
      functions.set = set(storage.setItem)
      functions.get = get(storage.getItem)
+
+     // travelWrite쪽에서는 createStorage를 계속 호출하기때문에 storages에 저장해두고, 저장된걸 갖다쓴다
+     storages[key] = functions
 
      return functions
 }
