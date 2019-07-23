@@ -58,16 +58,7 @@ export default class Main extends Component{
     return travelSelectedIdx
   }
   loadTravels = async(next) => {
-    // 추후 network통신으로 바꿀걸 대비하여 promise로 해두기
     let { travels } = await travel.getTravels()
-    // let travels  = await new Promise(resolve => {
-    //   resolve([
-    //     { no: 1, name: '2019년 제주도여행' },
-    //     { no: 2, name: '2019년 다낭여행' },
-    //     { no: 3, name: '2019년 다낭여행' },
-    //     { no: 4, name: '2019년 다낭여행' },
-    //   ])
-    // })
     this.setState({ travels }, next)
     return travels
   }

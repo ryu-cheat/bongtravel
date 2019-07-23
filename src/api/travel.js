@@ -3,7 +3,7 @@ const request = require('./request')
 
 export const writeTravelJournal = (travelId, body: Object = {}): Promise => {
      return request.post({
-         path: `/travels/${travelId}/journal`,
+         path: `/travels/${travelId}/journals`,
          body,
      })
 }
