@@ -85,7 +85,6 @@ export default class Main extends Component{
     return (
     <>
       <Header travel={ travel } />
-
       <ScrollableTabView
         style={style.flex1}
         tabBarPosition={'bottom'}

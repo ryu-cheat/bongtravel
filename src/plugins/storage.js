@@ -22,7 +22,7 @@ let travelSelectedIdx = createStorage('travelSelectedIdx', {
 })
 
 class travelWrite {
-     static InputTabs = createStorage('travelWriteInputTabs', {
+     static InputTabs = (travelId) => createStorage('travelWriteInputTabs/'+travelId, {
           set(setItem){
                return (array) => setItem(JSON.stringify(array)).then(()=>array) // string으로 저장 // 저장된 값 반환
           },
@@ -31,7 +31,7 @@ class travelWrite {
           },
      })
 
-     static Inputs = createStorage('travelWriteInputs', {
+     static Inputs = (travelId) => createStorage('travelWriteInputs/'+travelId, {
           set(setItem){
                return (array) => setItem(JSON.stringify(array)).then(()=>array) // string으로 저장 // 저장된 값 반환
           },

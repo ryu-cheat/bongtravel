@@ -23,7 +23,7 @@ import { travelWrite } from '../../plugins/storage'
 
 const style = TravelMapStyle
 
-export default TravelMapLoader = ({ travel }) => <TravelMap key={travel._id}/>
+export default TravelMapLoader = (props) => <TravelMap key={props.travel._id} {...props}/>
 
 class TravelMap extends Component{
   state = {
@@ -105,7 +105,7 @@ class WriteTravelButton extends Component{
   }
 
   loadTemplateWrites = async() => {
-    let travelTabs = await travelWrite.InputTabs.get()
+    let travelTabs = await travelWrite.InputTabs(this.props.travel._id).get()
     this.setState({
       templateCount: travelTabs.length,
     })
