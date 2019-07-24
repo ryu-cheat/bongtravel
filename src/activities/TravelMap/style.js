@@ -250,3 +250,48 @@ export const travelManageStyle = StyleSheet.create({
        justifyContent:'center',
   },
 })
+
+export const travelManageFormStyle = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
+  title:{
+    height: 60,
+    flexDirection: 'row',
+    alignItems:'center',
+  },
+  titleText:{
+    flex:1,
+    textAlign:'center',
+    fontSize: 16,
+    color:'#000',
+  },
+  divider:{
+    height: 1,
+    backgroundColor:'#e1e1e1',
+  },
+  backButton:{
+    width:50,
+    alignSelf:'stretch',
+    alignItems:'center',
+    justifyContent:'center',
+  },
+  textInput: {
+    padding: 15,
+    fontSize: 16,
+  },
+  maxLengthWrapper:{
+    alignItems:'flex-end',
+  },
+  okButton: {
+    marginHorizontal: 15,
+    borderRadius: 5,
+    padding:10,
+  },
+  okButtonText: {
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+
+})
