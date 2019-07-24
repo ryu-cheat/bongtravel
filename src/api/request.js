@@ -4,18 +4,21 @@ function request({
      path,
      method,
      body,
-     header = {}
+     headers = {}
 }) {
      path = path.replace(/^\//,'')
      
      // header 기본값 설정
-     if (!header) header = {};
-     if (!header.authorization) header.authorization = '';
+     if (!headers) headers = {};
+     if (!headers.authorization) headers.authorization = '';
+
+     headers['Accept'] = 'application/json'
+     headers['Content-Type'] = 'application/json'
 
      return fetch(config.api + path, {
           method,
           body,
-          ...header,
+          headers,
      }).then(rs=>rs.json())
 }
 
@@ -42,30 +45,30 @@ async function getFunction({ path, body, header={} }){
      })
 }
 
-function postFunction({ path, body, header={} }){
+function postFunction({ path, body, headers={} }){
      return request({
           method: 'POST',
           path,
-          body,
-          header,
+          body: JSON.stringify(body),
+          headers,
      })
 }
 
-function deleteFunction({ path, body, header={} }){
+function deleteFunction({ path, body, headers={} }){
      return request({
           method: 'DELETE',
           path,
-          body,
-          header,
+          body: JSON.stringify(body),
+          headers,
      })
 }
 
-function putFunction({ path, body, header={} }){
+function putFunction({ path, body, headers={} }){
      return request({
           method: 'PUT',
           path,
-          body,
-          header,
+          body: JSON.stringify(body),
+          headers,
      })
 }
 

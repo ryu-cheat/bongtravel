@@ -75,7 +75,7 @@ export default class WriteTravel extends Component{
 
    // 마지막으로 저장된 목록을 불러오고, 저장된게 없으면 새로 추가한다.
   loadInputTabs = async() => {
-    let inputTabs = await travelWrite.InputTabs.get()
+    let inputTabs = await travelWrite.InputTabs(this.props.travel._id).get()
     if (inputTabs.length == 0) {
       await this.addDefaultInputTabs()
     }else{
@@ -95,7 +95,7 @@ export default class WriteTravel extends Component{
   
   // 기본 입력 탭을 추가한다.
   addDefaultInputTabs = async( D = new Date(), selectedInputTabKey ) => {
-    let inputTabs = await travelWrite.InputTabs.get()
+    let inputTabs = await travelWrite.InputTabs(this.props.travel._id).get()
 
     let dateString = [ D.getFullYear(), D.getMonth()+1, D.getDate() ].map(d => (d+'').length == 1 ? '0'+d : d ).join('-')
     let timeString = [ D.getHours(), D.getMinutes() ].map(d => (d+'').length == 1 ? '0'+d : d ).join(':')
@@ -109,7 +109,7 @@ export default class WriteTravel extends Component{
     }
     inputTabs.push(inputTab)
 
-    await travelWrite.InputTabs.set(inputTabs)
+    await travelWrite.InputTabs(this.props.travel._id).set(inputTabs)
 
     if (!selectedInputTabKey) selectedInputTabKey = inputTabKey
     // 새로운 탭이 추가되면 탭목록갱신
@@ -126,11 +126,11 @@ export default class WriteTravel extends Component{
     newInput.inputTabKey = inputTabKey
 
     // inputs 목록에 새로운 내용 집어넣기
-    let inputs = await travelWrite.Inputs.get()
+    let inputs = await travelWrite.Inputs(this.props.travel._id).get()
     inputs = inputs.filter(input => input.inputTabKey != inputTabKey)
     inputs.push(newInput)
 
-    await travelWrite.Inputs.set(inputs)
+    await travelWrite.Inputs(this.props.travel._id).set(inputs)
 
     await this.loadInputTabs()
   }
@@ -171,7 +171,7 @@ export default class WriteTravel extends Component{
           </TouchableOpacity>
         </View>
         <View style={style.inputTabsScrollBottomLine}/>
-        <WriteTravelInput key={selectedInputTabKey} inputTab={ selectedInputTab } myLatLng={myLatLng} />
+        <WriteTravelInput travel={this.props.travel} key={selectedInputTabKey} inputTab={ selectedInputTab } myLatLng={myLatLng} />
       </View>
     )
 
