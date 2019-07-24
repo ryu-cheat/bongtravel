@@ -19,3 +19,15 @@ export const deleteTravels = (travelId): Promise => {
         path: `/travels/${travelId}`,
     })
 }
+export const createTravels = (travelId, body): Promise => {
+    return request.post({
+        path: `/travels/${travelId}`,
+        body,
+    })
+}
+export const modifyTravels = (travelId, body): Promise => {
+    return request.put({
+        path: `/travels/${travelId}`,
+        body,
+    })
+}

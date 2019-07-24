@@ -17,7 +17,6 @@ import { travelManageStyle }  from './style'
 import TravelManageForm from './TravelManageForm'
 const style = travelManageStyle
 
-const TravelManageController = { loadTravels: () => alert('초기화 안됨') }
 export default class TravelManage extends Component{
      state = {
           _loaded: false,
@@ -27,7 +26,7 @@ export default class TravelManage extends Component{
      constructor(p){
           super(p)
           
-          TravelManageController.loadTravels = this.loadTravels
+          activityController.travelManage.loadTravels = this.loadTravels
 
           TravelManageLoadFinishCheck.work(this.loadTravels)
           TravelManageLoadFinishCheck.work(this.loadTravelSelectedIdx)
