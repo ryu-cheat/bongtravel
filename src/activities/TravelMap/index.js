@@ -18,8 +18,10 @@ import {
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import Controller, { navigator, activityController } from '../../plugins/controller'
 import WriteTravel from './WriteTravel'
+import TravelJournals from './TravelJournals'
 import {TravelMapStyle} from './style'
 import { travelWrite } from '../../plugins/storage'
+import { TravelMainLoadFinishCheck } from '../../plugins/workpool';
 
 const style = TravelMapStyle
 
@@ -34,6 +36,14 @@ class TravelMap extends Component{
         longitude: -122.4324,
       },
     }
+  }
+  constructor(p) {
+    super(p)
+    TravelMainLoadFinishCheck.work(this.loadJournals)
+  }
+  loadJournals = () => { // 여행의 journals를 가져온다
+    // this.props.travel._id
+
   }
   getDelta = (journals: Array, key: 'longitude' | 'latitude') => {
     if (journals.length <= 1) {
@@ -85,6 +95,7 @@ class TravelMap extends Component{
           </MapView>
           <WriteTravelButton travel={this.props.travel} />
         </View>
+        <TravelJournals journals={this.state.journals} />
       </View>
     )
   }
