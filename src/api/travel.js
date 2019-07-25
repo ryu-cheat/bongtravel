@@ -19,9 +19,9 @@ export const deleteTravels = (travelId): Promise => {
         path: `/travels/${travelId}`,
     })
 }
-export const createTravels = (travelId, body): Promise => {
+export const createTravels = (body): Promise => {
     return request.post({
-        path: `/travels/${travelId}`,
+        path: `/travels`,
         body,
     })
 }

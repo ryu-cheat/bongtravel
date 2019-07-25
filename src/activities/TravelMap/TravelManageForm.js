@@ -25,7 +25,7 @@ export default class TravelManageForm extends Component {
      createTravel = async() => {
           let { title } = this.state
           if (await confirm('여행을 추가하시겠습니까?')){
-               travel.createTravels(this.props.travel._id, { title }).then(async(rs) => {
+               travel.createTravels({ title }).then(async(rs) => {
                     if (rs.success) {
                          await Controller.activityController.travelManage.loadTravels()
                          alert('추가되었습니다.')
