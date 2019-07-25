@@ -46,11 +46,6 @@ export default class Main extends Component{
 
     TravelMainLoadFinishCheck.work(this.loadTravels)
     TravelMainLoadFinishCheck.work(this.loadTravelSelectedIdx)
-    TravelMainLoadFinishCheck.finish(()=>{
-      this.setState({
-        _loaded: true
-      })
-    })
   }
   loadTravelSelectedIdx = async(next) => {
     let travelSelectedIdx  = await Storage.travelSelectedIdx.get()
@@ -86,6 +81,15 @@ export default class Main extends Component{
       </ScrollableTabView>
     </>
     )
+  }
+  componentDidMount(){
+    TravelMainLoadFinishCheck.finish(()=>{
+      this.setState({
+        _loaded: true
+      }, ()=>{
+        Controller.splash.close()
+      })
+    })
   }
 }
 
