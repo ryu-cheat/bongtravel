@@ -27,42 +27,40 @@ export default TravelMapLoader = (props) => <TravelMap key={props.travel._id} {.
 
 class TravelMap extends Component{
   state = {
-    visits: [],
+    journals: [],
     myLatLng: {
       latlng:{
         latitude: 37.79825,
         longitude: -122.4324,
       },
-      title:'123',
-      description:'321',
     }
   }
-  getDelta = (visits: Array, key: 'longitude' | 'latitude') => {
-    if (visits.length <= 1) {
+  getDelta = (journals: Array, key: 'longitude' | 'latitude') => {
+    if (journals.length <= 1) {
       return 0.1
     }else{
-      let minValue = visits.reduce((prev, current)=> Math.min(prev, current.latlng[key]), visits[0].latlng[key])
-      let maxValue = visits.reduce((prev, current)=> Math.max(prev, current.latlng[key]), visits[0].latlng[key])
+      let minValue = journals.reduce((prev, current)=> Math.min(prev, current.latlng[key]), journals[0].latlng[key])
+      let maxValue = journals.reduce((prev, current)=> Math.max(prev, current.latlng[key]), journals[0].latlng[key])
       return (maxValue - minValue) * 3
     }
   }
-  getInitialRegion = (visits: Array) => {
+  getInitialRegion = (journals: Array) => {
     let initialRegion = {}
 
-    initialRegion.latitude = visits.reduce((prev, current)=> prev+current.latlng.latitude, 0)/visits.length
-    initialRegion.longitude = visits.reduce((prev, current)=> prev+current.latlng.longitude, 0)/visits.length
-    initialRegion.latitudeDelta = this.getDelta(visits, 'latitude')
-    initialRegion.longitudeDelta = this.getDelta(visits, 'longitude')
+    initialRegion.latitude = journals.reduce((prev, current)=> prev+current.latlng.latitude, 0)/journals.length
+    initialRegion.longitude = journals.reduce((prev, current)=> prev+current.latlng.longitude, 0)/journals.length
+    initialRegion.latitudeDelta = this.getDelta(journals, 'latitude')
+    initialRegion.longitudeDelta = this.getDelta(journals, 'longitude')
 
     return initialRegion
   }
   render(){
     const { width } = Dimensions.get('window')
     
-    let visits = this.state.visits.length > 0 ? this.state.visits : [ this.state.myLatLng ]
+    let journals = this.state.journals.length > 0 ? this.state.journals : [ this.state.myLatLng ]
     
     // 첫 region은 이동한 경로를 한눈에 볼 수 있도록 보정합니다.
-    let initialRegion = this.getInitialRegion(visits)
+    let initialRegion = this.getInitialRegion(journals)
 
     return (
       <View style={style.travelWrapper}>
@@ -70,7 +68,7 @@ class TravelMap extends Component{
           <MapView
             initialRegion={initialRegion}
             style={{ width, height: width }}>
-            {visits.map((visit, index) => (
+            {journals.map((visit, index) => (
               <Marker
                 coordinate={visit.latlng}
                 title={visit.title}
@@ -80,7 +78,7 @@ class TravelMap extends Component{
             ))}
 
             <Polyline
-              coordinates={this.state.visits.map(m => m.latlng)}
+              coordinates={this.state.journals.map(m => m.latlng)}
               strokeColor="#000"
               strokeWidth={6}
             />
