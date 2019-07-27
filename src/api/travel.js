@@ -38,3 +38,9 @@ export const getTravelJournals = (travelId): Promise => {
         path: `/travels/${travelId}/journals`,
     })
 }
+
+export const getJournals = (travelId): Promise => {
+    return request.get({
+        path: `/travels/journals/${travelId}`,
+    })
+}

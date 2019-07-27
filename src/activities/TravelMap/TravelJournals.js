@@ -19,6 +19,7 @@ import {
 } from 'react-native';
 
 import Controller from '../../plugins/controller'
+import TravelJournal from '../TravelJournal'
 
 function getDistance({ from: { lat: lat1, lng: lng1 }, to: { lat: lat2, lng: lng2 } }) {
   var Lat = (lat2 - lat1) * Math.PI / 180
@@ -40,7 +41,9 @@ export default class TravelMap extends Component {
   state = {
 
   }
-
+  showJournal = (journalId) => {
+    Controller.navigator.push(<TravelJournal journalId={journalId}/>)
+  }
   renderItem = ({ item }) => {
     if (item.type == 'gap') {
       return (<View style={{ height: 20 }} />)
@@ -69,7 +72,7 @@ export default class TravelMap extends Component {
         }
       }
 
-      return (<TouchableOpacity style={style.journalWrapper}>
+      return (<TouchableOpacity style={style.journalWrapper} onPress={() => this.showJournal(journal._id)}>
         <Image source={{ uri: journal.picture.path }} style={style.journalPicture} />
         <View style={{ width: 10, }} />
         <View style={{ flex: 1 }}>
