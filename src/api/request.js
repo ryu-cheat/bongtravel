@@ -12,9 +12,10 @@ function request({
      if (!headers) headers = {};
      if (!headers.authorization) headers.authorization = '';
 
-     headers['Accept'] = 'application/json'
-     headers['Content-Type'] = 'application/json'
-
+     if (!headers['Content-Type']) headers['Content-Type'] = 'application/json'
+     if (!!body) {
+          body = body.constructor.name == 'FormData' ? body : JSON.stringify(body)
+     }
      return fetch(config.api + path, {
           method,
           body,
@@ -49,7 +50,7 @@ function postFunction({ path, body, headers={} }){
      return request({
           method: 'POST',
           path,
-          body: JSON.stringify(body),
+          body,
           headers,
      })
 }
@@ -58,7 +59,7 @@ function deleteFunction({ path, body, headers={} }){
      return request({
           method: 'DELETE',
           path,
-          body: JSON.stringify(body),
+          body,
           headers,
      })
 }
@@ -67,7 +68,7 @@ function putFunction({ path, body, headers={} }){
      return request({
           method: 'PUT',
           path,
-          body: JSON.stringify(body),
+          body,
           headers,
      })
 }

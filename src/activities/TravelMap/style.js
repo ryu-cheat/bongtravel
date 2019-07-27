@@ -147,6 +147,18 @@ export const TravelMapStyle = StyleSheet.create({
   travelWrapper:{
     flex: 1,
   },
+  markerBg:{
+    width:16,
+    height:16,
+    alignItems:'center',
+    justifyContent:'center',
+    borderRadius: 16/2,
+  },
+  markerText:{
+    fontSize:12,
+    color:'#fff',
+    fontWeight:'bold',
+  },
 
   writeTravelJournalButton:{
     position:'absolute',

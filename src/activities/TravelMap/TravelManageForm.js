@@ -28,6 +28,7 @@ export default class TravelManageForm extends Component {
                travel.createTravels({ title }).then(async(rs) => {
                     if (rs.success) {
                          await Controller.activityController.travelManage.loadTravels()
+                         await activityController.main.loadTravels()
                          await alert('추가되었습니다.')
                          await Controller.navigator.pop()
                     } else {

@@ -31,3 +31,10 @@ export const modifyTravels = (travelId, body): Promise => {
         body,
     })
 }
+
+
+export const getTravelJournals = (travelId): Promise => {
+    return request.get({
+        path: `/travels/${travelId}/journals`,
+    })
+}

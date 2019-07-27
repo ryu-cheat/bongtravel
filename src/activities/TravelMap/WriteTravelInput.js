@@ -332,6 +332,7 @@ export default class WriteTravelInput extends Component{
           }).then(rs => {
             if ( rs.success ) {
               this.deleteTravelJournal(true)
+              Controller.activityController.travel.loadJournals()
               alert('완료되었습니다')
             } else {
               this.setState({ _loaded: true })

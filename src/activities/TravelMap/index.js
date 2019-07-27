@@ -22,6 +22,7 @@ import TravelJournals from './TravelJournals'
 import {TravelMapStyle} from './style'
 import { travelWrite } from '../../plugins/storage'
 import { TravelMainLoadFinishCheck } from '../../plugins/workpool';
+import * as API from '../../api'
 
 const style = TravelMapStyle
 
@@ -29,42 +30,51 @@ export default TravelMapLoader = (props) => <TravelMap key={props.travel._id} {.
 
 class TravelMap extends Component{
   state = {
+    _loaded: false,
     journals: [],
     myLatLng: {
-      latlng:{
-        latitude: 37.79825,
-        longitude: -122.4324,
-      },
+      latitude: 37.79825,
+      longitude: -122.4324,
     }
   }
   constructor(p) {
     super(p)
+    Controller.activityController.travel.loadJournals = this.loadJournals
     TravelMainLoadFinishCheck.work(this.loadJournals)
   }
-  loadJournals = () => { // 여행의 journals를 가져온다
+  loadJournals = (next) => { // 여행의 journals를 가져온다
     // this.props.travel._id
-
+    API.travel.getTravelJournals(this.props.travel._id).then(result => {
+      this.setState({
+        _loaded: true,
+        journals: result.travelJournals,
+      })
+      next()
+    })
   }
   getDelta = (journals: Array, key: 'longitude' | 'latitude') => {
     if (journals.length <= 1) {
-      return 0.1
+      return 0.2
     }else{
-      let minValue = journals.reduce((prev, current)=> Math.min(prev, current.latlng[key]), journals[0].latlng[key])
-      let maxValue = journals.reduce((prev, current)=> Math.max(prev, current.latlng[key]), journals[0].latlng[key])
-      return (maxValue - minValue) * 3
+      let minValue = journals.reduce((prev, current)=> Math.min(prev, current[key]), journals[0][key])
+      let maxValue = journals.reduce((prev, current)=> Math.max(prev, current[key]), journals[0][key])
+      return Math.max( 0.2, (maxValue - minValue) * 3)
     }
   }
   getInitialRegion = (journals: Array) => {
     let initialRegion = {}
 
-    initialRegion.latitude = journals.reduce((prev, current)=> prev+current.latlng.latitude, 0)/journals.length
-    initialRegion.longitude = journals.reduce((prev, current)=> prev+current.latlng.longitude, 0)/journals.length
+    initialRegion.latitude = journals.reduce((prev, current)=> prev+current.latitude, 0)/journals.length
+    initialRegion.longitude = journals.reduce((prev, current)=> prev+current.longitude, 0)/journals.length
     initialRegion.latitudeDelta = this.getDelta(journals, 'latitude')
     initialRegion.longitudeDelta = this.getDelta(journals, 'longitude')
 
     return initialRegion
   }
   render(){
+    let { _loaded } = this.state
+    if ( !_loaded ) return (<View />) // 나중에 로딩 뷰 띄우기
+
     const { width } = Dimensions.get('window')
     
     let journals = this.state.journals.length > 0 ? this.state.journals : [ this.state.myLatLng ]
@@ -76,21 +86,29 @@ class TravelMap extends Component{
       <View style={style.travelWrapper}>
         <View style={style.relative}>
           <MapView
+            key={initialRegion}
             initialRegion={initialRegion}
             style={{ width, height: width }}>
             {journals.map((visit, index) => (
               <Marker
-                coordinate={visit.latlng}
+                coordinate={visit}
                 title={visit.title}
                 description={visit.description}
                 key={index}
-              />
+              >
+                <View style={[
+                  style.markerBg,
+                  { backgroundColor:'#'+(new Array(6).fill(0).map(a=>Math.floor(Math.random()*16).toString(16)).join('')) }
+                ]}>
+                  <Text style={style.markerText}>{index+1}</Text>
+                </View>
+              </Marker>
             ))}
 
             <Polyline
-              coordinates={this.state.journals.map(m => m.latlng)}
+              coordinates={this.state.journals.map(m => m)}
               strokeColor="#000"
-              strokeWidth={6}
+              strokeWidth={2}
             />
           </MapView>
           <WriteTravelButton travel={this.props.travel} />
