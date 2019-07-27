@@ -56,6 +56,19 @@ export default class TravelMap extends Component {
 
       let Dates = [D.getFullYear(), D.getMonth() + 1, D.getDate()].map(d => d < 10 ? '0' + d : '' + d)
 
+      let stayTime = ''
+      if (journal.stayTime) {
+        if (journal.stayTime < 60 * 60) {
+          stayTime = `${Math.floor(journal.stayTime / 60 * 10) / 10} 분`
+        } else if (journal.stayTime < 60 * 60 * 24) {
+          stayTime = `${Math.floor(journal.stayTime / 60 / 60 * 10) / 10} 시간`
+        } else if (journal.stayTime < 60 * 60 * 24 * 100) {
+          stayTime = `${Math.floor(journal.stayTime / 60 / 60 / 24 * 10) / 10} 일`
+        } else {
+          stayTime = `${Math.floor(journal.stayTime / 60 / 60 / 24)} 일`
+        }
+      }
+
       return (<TouchableOpacity style={style.journalWrapper}>
         <Image source={{ uri: journal.picture.path }} style={style.journalPicture} />
         <View style={{ width: 10, }} />
@@ -64,6 +77,8 @@ export default class TravelMap extends Component {
           <Text style={style.journalDateText}>{Dates.join('/')} {D.toLocaleTimeString()}</Text>
         </View>
 
+        <View style={{ width: 10, }} />
+        <Text style={style.stayTimeText}>{stayTime + ''}</Text>
         <View style={{ width: 10, }} />
 
       </TouchableOpacity>)
@@ -86,6 +101,8 @@ export default class TravelMap extends Component {
       newJournals.push({ type: 'journal', journal, key: journal._id })
 
       if (!!nextJournal) {
+        journal.stayTime = Math.floor((new Date(nextJournal.date).getTime() - new Date(journal.date).getTime()) / 1000)
+        
         distanceToNextJournal = getDistance({
           from: {
             lat: journal.latitude,
@@ -151,5 +168,8 @@ const style = StyleSheet.create({
   titleText: {
     fontSize: 15,
     color: '#000'
+  },
+  stayTimeText: {
+    fontSize: 12,
   },
 })
