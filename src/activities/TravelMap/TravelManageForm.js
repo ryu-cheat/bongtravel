@@ -19,7 +19,7 @@ const style = travelManageFormStyle
 export default class TravelManageForm extends Component {
      state = {
           isEdit: !!this.props.travel,
-          title: this.props.travel.title,
+          title: (this.props.travel || {title:''}).title,
      }
 
      createTravel = async() => {
@@ -28,9 +28,10 @@ export default class TravelManageForm extends Component {
                travel.createTravels({ title }).then(async(rs) => {
                     if (rs.success) {
                          await Controller.activityController.travelManage.loadTravels()
-                         alert('추가되었습니다.')
+                         await alert('추가되었습니다.')
+                         await Controller.navigator.pop()
                     } else {
-                         alert('이미 존재하는 제목입니다.\n\n다른 제목을 입력해주세요')
+                         await alert('이미 존재하는 제목입니다.\n\n다른 제목을 입력해주세요')
                     }
                }).catch(e => { alert('오류가 발생했습니다.\n\n다시 시도해주세요') })
           }
@@ -38,11 +39,13 @@ export default class TravelManageForm extends Component {
 
      modifyTravel = async() => {
           let { title } = this.state
-          if (await confirm('여행을 추가하시겠습니까?')){
+          if (await confirm('여행을 수정하시겠습니까?')){
                travel.modifyTravels(this.props.travel._id, { title }).then(async(rs) => {
                     if (rs.success) {
                          await Controller.activityController.travelManage.loadTravels()
-                         alert('수정되었습니다.')
+                         await activityController.main.loadTravels()
+                         await alert('수정되었습니다.')
+                         await Controller.navigator.pop()
                     } else{
                          alert('오류가 발생했습니다')
                     }

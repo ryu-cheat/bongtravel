@@ -249,6 +249,15 @@ export const travelManageStyle = StyleSheet.create({
        alignItems:'center',
        justifyContent:'center',
   },
+  addTravelButton:{
+    paddingVertical: 15,
+    alignItems: 'center',
+    backgroundColor: '#3772e9',
+  },
+  addTravelButtonText:{
+    fontSize: 15,
+    color: '#fff',
+  },
 })
 
 export const travelManageFormStyle = StyleSheet.create({
@@ -282,14 +291,17 @@ export const travelManageFormStyle = StyleSheet.create({
   },
   maxLengthWrapper:{
     alignItems:'flex-end',
+    paddingHorizontal:15,
   },
   okButton: {
     marginHorizontal: 15,
     borderRadius: 5,
-    padding:10,
+    paddingVertical:15,
+    alignItems:'center',
+    backgroundColor:'#3772e9',
   },
   okButtonText: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#fff',
     fontWeight: 'bold',
   },

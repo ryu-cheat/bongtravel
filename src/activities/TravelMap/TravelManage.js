@@ -135,6 +135,9 @@ export default class TravelManage extends Component{
                          backgroundColor: '#f1f1f1',
                     }}
                />
+               <TouchableOpacity style={style.addTravelButton} onPress={() => Controller.navigator.push(<TravelManageForm />)}>
+                    <Text style={style.addTravelButtonText}>여행 추가하기</Text>
+               </TouchableOpacity>
           </View>)
      }
 }
