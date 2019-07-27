@@ -78,7 +78,7 @@ export default class TravelMap extends Component {
         </View>
 
         <View style={{ width: 10, }} />
-        <Text style={style.stayTimeText}>{stayTime + ''}</Text>
+        <Text style={style.stayTimeText}>{stayTime}</Text>
         <View style={{ width: 10, }} />
 
       </TouchableOpacity>)
@@ -99,10 +99,8 @@ export default class TravelMap extends Component {
       let distanceToNextJournal = 0
 
       newJournals.push({ type: 'journal', journal, key: journal._id })
-
+      
       if (!!nextJournal) {
-        journal.stayTime = Math.floor((new Date(nextJournal.date).getTime() - new Date(journal.date).getTime()) / 1000)
-        
         distanceToNextJournal = getDistance({
           from: {
             lat: journal.latitude,
