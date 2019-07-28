@@ -73,7 +73,7 @@ export default class TravelJournal extends React.Component {
                               >
                                    <Marker coordinate={region} />
                               </MapView>
-                              <View style={style.mapviewLock} />
+                              {/* <View style={style.mapviewLock} /> */}
                          </View>
                     </View>
                     <View style={{ height: 10, }} />
@@ -87,6 +87,12 @@ export default class TravelJournal extends React.Component {
                               itemWidth={width - 80}
                          />
                     </View>
+                    <View style={{ height: 10, }} />
+                    {!!journal.description && <View>
+                         <Text style={style.titleText}>내용</Text>
+                         <Text style={style.description} numberOfLines={1}>{journal.description}</Text>
+                         <View style={{ height: 10, }} />
+                    </View>}
                </ScrollView>
           </>)
      }
@@ -117,6 +123,11 @@ const style = StyleSheet.create({
      oneLineContentDescriptionText: {
           fontSize: 15,
           flex: 1,
+          color: '#000',
+     },
+     description: {
+          marginTop: 5,
+          fontSize: 15,
           color: '#000',
      },
      picture: {
