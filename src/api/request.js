@@ -1,6 +1,7 @@
 const config = require('../config')
 const delay = require('../plugins/delay')
 const Storage = require('../plugins/storage')
+const lingostApi = require('../lingost/api')
 
 async function request({
      path,
@@ -26,7 +27,14 @@ async function request({
           method,
           body,
           headers,
-     }).then(rs=>rs.json())
+     }).then(rs=>rs.json()).then(rs=>{
+          if (rs.authRequired) {
+               lingostApi.loginCheck()
+               return { success: false }
+          }else{
+               return rs
+          }
+     })
 }
 
 // get 은 단순 읽어오기이므로, 오류 시 세 번까지 다시 시도한다
