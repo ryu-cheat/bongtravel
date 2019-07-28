@@ -20,13 +20,16 @@ import Controller, { activityController } from '../plugins/controller'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 import TravelMap from './TravelMap'
 import TravelManage from './TravelMap/TravelManage'
+
+import Setting from './Setting'
+
 import { TravelMainLoadFinishCheck } from '../plugins/workpool'
 import { travel } from '../api'
 
 const Tabs = [
   ['home','홈', TravelMap],
   ['social','소셜', View],
-  ['setting','설정', View],
+  ['setting','설정', Setting],
 ]
 
 export default class Main extends Component{
