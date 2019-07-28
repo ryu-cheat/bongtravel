@@ -48,6 +48,14 @@ export const travelInputStyle = StyleSheet.create({
   travelDate:{
     flex: 1,
   },
+  travelDescription:{
+    marginTop: 5,
+    borderColor: '#e6e6e6',
+    borderWidth: 1,
+    fontSize: 16,
+    height: 200,
+    textAlignVertical: 'top',
+  },
   travelDateInput:{
     marginTop: 5,
     borderColor: '#e6e6e6',
