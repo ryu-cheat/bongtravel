@@ -6,12 +6,15 @@ import {
      StyleSheet,
      TouchableOpacity,
      FlatList,
+     Dimensions,
      Image,
 } from 'react-native';
 
 import Controller from '../../plugins/controller'
 import * as API from '../../api'
 import TravelJournal from '../TravelJournal'
+
+const { width } = Dimensions.get('window')
 
 class Setting extends React.Component {
      state = {
@@ -52,22 +55,27 @@ class Setting extends React.Component {
                layoutMeasurement: { height: layoutHeight },
                contentOffset: { y: scrollTop },
           } = e.nativeEvent
-          if (scrollHeight- 100 <= layoutHeight + scrollTop ) {
+          if (scrollHeight - 100 <= layoutHeight + scrollTop) {
                this.loadLatestJournals()
           }
      }
      renderJournal = ({ item }) => {
           let D = new Date(item.date)
           let Dates = [D.getFullYear(), D.getMonth() + 1, D.getDate()].map(d => d < 10 ? '0' + d : '' + d)
+          let pictureSize = width - 20
 
           return (<TouchableOpacity style={style.journalWrapper} onPress={() => this.showJournal(item._id)}>
-               <Image source={{ uri: item.picture.path }} style={style.journalPicture} resizeMode='cover' />
-               <View style={{ width: 10, }} />
-               <View style={{ flex: 1 }}>
-                    <Text style={style.titleText}>{item.title}</Text>
-                    <Text style={style.journalDateText}>{Dates.join('/')} {D.toLocaleTimeString()}</Text>
+               <View>
+                    <Image source={{ uri: item.picture.path }} style={style.journalPicture} resizeMode='cover' style={{ width: pictureSize, height: pictureSize }} />
                </View>
-               <View style={{ width: 10, }} />
+               <View style={style.journalContentWrapper}>
+                    <View style={{ width: 10, }} />
+                    <View style={{ flex: 1 }}>
+                         <Text style={style.titleText}>{item.title}</Text>
+                         <Text style={style.journalDateText}>{Dates.join('/')} {D.toLocaleTimeString()}</Text>
+                    </View>
+                    <View style={{ width: 10, }} />
+               </View>
           </TouchableOpacity>)
      }
      render() {
@@ -76,7 +84,6 @@ class Setting extends React.Component {
 
           return (<View style={style.wrapper}>
                <FlatList
-               ListEmptyComponent={<View />}
                     onScroll={this.onScroll}
                     style={style.wrapper}
                     data={journals}
@@ -93,11 +100,8 @@ const style = StyleSheet.create({
           flex: 1,
      },
      journalWrapper: {
-          flexDirection: 'row',
-          alignItems: 'center',
           marginHorizontal: 10,
-          height: 60,
-          borderRadius: 60 / 2,
+          borderRadius: 10,
           overflow: 'hidden',
           borderColor: '#ddd',
           borderWidth: 1,
@@ -112,8 +116,8 @@ const style = StyleSheet.create({
           fontSize: 15,
           color: '#000'
      },
-     journalPicture: {
-          width: 60,
-          height: 60,
+     journalContentWrapper: {
+          flexDirection: 'row',
+          paddingVertical:10,
      },
 })

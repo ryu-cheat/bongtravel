@@ -20,13 +20,8 @@ import { NaverLogin, getProfile } from 'react-native-naver-login';
 import Storage from '../plugins/storage'
 import * as API from '../api'
 import * as LingostApi from '../lingost/api'
-
-const naverInitials = {
-  kConsumerKey: 'nZk9BwuggjZYRneUilVP',
-  kConsumerSecret: 'Iir4a3VHYu',
-  kServiceAppName: 'lendland',
-  kServiceAppUrlScheme: 'dooboolaburlscheme', // only for iOS
-};
+import Config from '../config'
+const naverInitials = Config.naverInit;
 
 export default class Login extends Component {
   constructor(p) {
