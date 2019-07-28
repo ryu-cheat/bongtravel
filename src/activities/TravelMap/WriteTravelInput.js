@@ -193,11 +193,10 @@ export default class WriteTravelInput extends Component{
   // 사진추가하기
   addPicture = () => {
     ImagePicker.openPicker({
-      width: 400,
-      height: 400,
+      compressImageMaxWidth: 400,
+      compressImageMaxHeight: 400,
       includeExif: true,
       multiple: true,
-      cropping: true,
     }).then(async(pictures) => {
       // 사진을 그냥 추가하는게아니라, 날짜 다른 사진이 있는지 확인해야되기 때문에, 임시저장 -> 비교 -> 필터 -> 저장 한다
       let _pictures = []
