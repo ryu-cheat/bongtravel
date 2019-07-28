@@ -1,6 +1,8 @@
 const config = require('../config')
 const delay = require('../plugins/delay')
-function request({
+const Storage = require('../plugins/storage')
+
+async function request({
      path,
      method,
      body,
@@ -16,11 +18,23 @@ function request({
      if (!!body) {
           body = body.constructor.name == 'FormData' ? body : JSON.stringify(body)
      }
-     return fetch(config.api + path, {
+
+     let loginToken = await Storage.loginToken.get()
+     headers['Authorization'] = loginToken
+
+     return await fetch(config.api + path, {
           method,
           body,
           headers,
-     }).then(rs=>rs.json())
+     }).then(rs=>rs.json()).then(rs=>{
+          if (rs.authRequired) {
+               // ../lingost/api에서도 request.js를 import 하므로, request 함수 안에서 require하도록한다
+               require('../lingost/api').loginCheck()
+               return { success: false }
+          }else{
+               return rs
+          }
+     })
 }
 
 // get 은 단순 읽어오기이므로, 오류 시 세 번까지 다시 시도한다

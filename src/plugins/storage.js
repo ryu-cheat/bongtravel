@@ -50,7 +50,19 @@ class travelWrite {
      })
 }
 
+
+let loginToken = createStorage('loginToken', {
+     set(setItem){
+          return (value) => setItem(value+'').then(()=>value) // string으로 저장 // 저장된 값 반환
+     },
+     get(getItem){
+          return async() => await getItem() || ''
+     },
+})
+
+
 module.exports = {
      travelSelectedIdx,
      travelWrite,
+     loginToken,
 }

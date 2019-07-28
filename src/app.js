@@ -22,6 +22,9 @@ import './plugins/workpool'
 import './plugins/sockets'
 import './plugins/workpool'
 
+// lingost를 초기화해준다
+import './lingost'
+
 import Navigator from './components/services/Navigator'
 import Splash from './splash'
 import Permissions from './permissions'
