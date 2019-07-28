@@ -1,7 +1,6 @@
 const config = require('../config')
 const delay = require('../plugins/delay')
 const Storage = require('../plugins/storage')
-const lingostApi = require('../lingost/api')
 
 async function request({
      path,
@@ -29,7 +28,8 @@ async function request({
           headers,
      }).then(rs=>rs.json()).then(rs=>{
           if (rs.authRequired) {
-               lingostApi.loginCheck()
+               // ../lingost/api에서도 request.js를 import 하므로, request 함수 안에서 require하도록한다
+               require('../lingost/api').loginCheck()
                return { success: false }
           }else{
                return rs
