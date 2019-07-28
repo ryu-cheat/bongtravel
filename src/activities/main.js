@@ -22,13 +22,14 @@ import TravelMap from './TravelMap'
 import TravelManage from './TravelMap/TravelManage'
 
 import Setting from './Setting'
+import Social from './Social'
 
 import { TravelMainLoadFinishCheck } from '../plugins/workpool'
 import { travel } from '../api'
 
 const Tabs = [
   ['home','홈', TravelMap],
-  ['social','소셜', View],
+  ['social','소셜', Social],
   ['setting','설정', Setting],
 ]
 
