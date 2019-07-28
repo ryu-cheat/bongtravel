@@ -42,7 +42,7 @@ class TravelMap extends Component{
     Controller.activityController.travel.loadJournals = this.loadJournals
     TravelMainLoadFinishCheck.work(this.loadJournals)
   }
-  loadJournals = (next) => { // 여행의 journals를 가져온다
+  loadJournals = (next = () => {}) => { // 여행의 journals를 가져온다
     // this.props.travel._id
     API.travel.getTravelJournals(this.props.travel._id).then(result => {
       this.setState({

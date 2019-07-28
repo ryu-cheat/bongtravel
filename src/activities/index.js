@@ -6,10 +6,9 @@
  * @flow
  */
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
-  Text,
 } from 'react-native';
 
 import Controller, { navigator } from '../plugins/controller'
@@ -18,13 +17,15 @@ import Login from './login'
 import { passStateToProps } from 'react-lingost'
 import * as LingostApi from '../lingost/api'
 
-class Index extends Component{
+class Index extends Component {
   constructor(p) {
     super(p)
     LingostApi.loginCheck()
   }
-  render(){
-    return (this.props.isLogin ? <Main /> : <Login />)
+  render() {
+    let { isLogin } = this.props
+    if (isLogin == null) return (<View />);
+    return (isLogin ? <Main /> : <Login />)
   }
 }
 
