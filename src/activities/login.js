@@ -18,7 +18,7 @@ import Controller, { navigator } from '../plugins/controller'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { NaverLogin, getProfile } from 'react-native-naver-login';
 import Storage from '../plugins/storage'
-import API from '../api'
+import * as API from '../api'
 
 const naverInitials = {
   kConsumerKey: 'nZk9BwuggjZYRneUilVP',
@@ -38,7 +38,14 @@ export default class Login extends Component {
       if (!result || profileResult.resultcode === '024') {
         return alert('로그인 실패' + (profileResult || { message: '' }).message)
       } else {
-        
+
+        let loginResult = await API.login.naverLogin(result)
+        if (loginResult.success) {
+          await Storage.loginToken.set(loginResult.loginToken)
+          
+        }else{
+          alert('로그인 실패\n\n네이버 아이디가 이상합니다.')
+        }
       }
     } catch (err) {
       alert('로그인 실패\n\n' + err.toString())
