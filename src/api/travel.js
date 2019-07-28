@@ -19,3 +19,28 @@ export const deleteTravels = (travelId): Promise => {
         path: `/travels/${travelId}`,
     })
 }
+export const createTravels = (body): Promise => {
+    return request.post({
+        path: `/travels`,
+        body,
+    })
+}
+export const modifyTravels = (travelId, body): Promise => {
+    return request.put({
+        path: `/travels/${travelId}`,
+        body,
+    })
+}
+
+
+export const getTravelJournals = (travelId): Promise => {
+    return request.get({
+        path: `/travels/${travelId}/journals`,
+    })
+}
+
+export const getJournals = (travelId): Promise => {
+    return request.get({
+        path: `/travels/journals/${travelId}`,
+    })
+}

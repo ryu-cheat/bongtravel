@@ -14,9 +14,9 @@ import Storage from '../../plugins/storage'
 import { alert, confirm } from '../../plugins/alert'
 import { TravelManageLoadFinishCheck } from '../../plugins/workpool'
 import { travelManageStyle }  from './style'
+import TravelManageForm from './TravelManageForm'
 const style = travelManageStyle
 
-const TravelManageController = { loadTravels: () => alert('초기화 안됨') }
 export default class TravelManage extends Component{
      state = {
           _loaded: false,
@@ -26,7 +26,7 @@ export default class TravelManage extends Component{
      constructor(p){
           super(p)
           
-          TravelManageController.loadTravels = this.loadTravels
+          activityController.travelManage.loadTravels = this.loadTravels
 
           TravelManageLoadFinishCheck.work(this.loadTravels)
           TravelManageLoadFinishCheck.work(this.loadTravelSelectedIdx)
@@ -81,6 +81,10 @@ export default class TravelManage extends Component{
                     })
                }
           }
+          const modifyTravel = async()=>{
+               Controller.navigator.push(<TravelManageForm travel={item} />)
+          }
+
           const active = index == this.state.travelSelectedIdx
 
           return (<View style={style.travelItem}>
@@ -97,7 +101,7 @@ export default class TravelManage extends Component{
                </View>
                <View style={{ height: 1, backgroundColor:'#ddd', }}/>
                <View style={style.travelManageButtons}>
-                    <TouchableOpacity style={style.travelManageButton}>
+                    <TouchableOpacity style={style.travelManageButton} onPress={modifyTravel}>
                          <Text style={style.travelManageButtonText}>수정하기</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={style.travelManageButton} onPress={deleteTravel}>
@@ -131,6 +135,9 @@ export default class TravelManage extends Component{
                          backgroundColor: '#f1f1f1',
                     }}
                />
+               <TouchableOpacity style={style.addTravelButton} onPress={() => Controller.navigator.push(<TravelManageForm />)}>
+                    <Text style={style.addTravelButtonText}>여행 추가하기</Text>
+               </TouchableOpacity>
           </View>)
      }
 }

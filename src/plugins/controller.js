@@ -25,8 +25,14 @@ class activityController {
           loadTravelSelectedIdx: ():Promise<Number> => initPath('/src/activities/main.js'),
           manageTravel: () => initPath('/src/activities/main.js'),
      }
+     // 여행일지쓰기 등
      static travel = {
           loadTemplateWrites: () => initPath('/src/activities/TravelMap/index.js'),
+          loadJournals: () => initPath('/src/activities/TravelMap/index.js'),
+     }
+     // 여행목록관리
+     static travelManage = {
+          loadTravels: () => initPath('/src/activities/TravelMap/TravelManage.js'),
      }
 }
 

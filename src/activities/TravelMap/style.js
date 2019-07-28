@@ -147,6 +147,18 @@ export const TravelMapStyle = StyleSheet.create({
   travelWrapper:{
     flex: 1,
   },
+  markerBg:{
+    width:16,
+    height:16,
+    alignItems:'center',
+    justifyContent:'center',
+    borderRadius: 16/2,
+  },
+  markerText:{
+    fontSize:12,
+    color:'#fff',
+    fontWeight:'bold',
+  },
 
   writeTravelJournalButton:{
     position:'absolute',
@@ -249,4 +261,61 @@ export const travelManageStyle = StyleSheet.create({
        alignItems:'center',
        justifyContent:'center',
   },
+  addTravelButton:{
+    paddingVertical: 15,
+    alignItems: 'center',
+    backgroundColor: '#3772e9',
+  },
+  addTravelButtonText:{
+    fontSize: 15,
+    color: '#fff',
+  },
+})
+
+export const travelManageFormStyle = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
+  title:{
+    height: 60,
+    flexDirection: 'row',
+    alignItems:'center',
+  },
+  titleText:{
+    flex:1,
+    textAlign:'center',
+    fontSize: 16,
+    color:'#000',
+  },
+  divider:{
+    height: 1,
+    backgroundColor:'#e1e1e1',
+  },
+  backButton:{
+    width:50,
+    alignSelf:'stretch',
+    alignItems:'center',
+    justifyContent:'center',
+  },
+  textInput: {
+    padding: 15,
+    fontSize: 16,
+  },
+  maxLengthWrapper:{
+    alignItems:'flex-end',
+    paddingHorizontal:15,
+  },
+  okButton: {
+    marginHorizontal: 15,
+    borderRadius: 5,
+    paddingVertical:15,
+    alignItems:'center',
+    backgroundColor:'#3772e9',
+  },
+  okButtonText: {
+    fontSize: 15,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+
 })

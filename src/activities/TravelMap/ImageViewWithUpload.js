@@ -74,7 +74,9 @@ export default class ImageViewWithUpload extends Component{
     if ( !/^http(s)?:\/\//.test(this.state.path) ) {
       // ImageUpload.work 는 this.upload함수를 동시에 3개씩 처리해준다.
       // 3개 중 가장먼저끝난 작업을 지우고, 뒤의 작업을 실행하게된다.
-      ImageUpload.work(this.upload)
+      ImageUpload.work(this.upload, {
+        key: this.state.path
+      })
     }
   }
 }

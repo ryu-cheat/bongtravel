@@ -103,7 +103,7 @@ export default class WriteTravel extends Component{
     let inputTabKey = Math.random()+''
 
     let inputTab = {
-      title: dateString+' 여행',
+      title: dateString+'의 관광지',
       date: dateString+' '+timeString,
       key: inputTabKey
     }
