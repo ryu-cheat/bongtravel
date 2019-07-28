@@ -1,6 +1,8 @@
 const config = require('../config')
 const delay = require('../plugins/delay')
-function request({
+const Storage = require('../plugins/storage')
+
+async function request({
      path,
      method,
      body,
@@ -16,7 +18,11 @@ function request({
      if (!!body) {
           body = body.constructor.name == 'FormData' ? body : JSON.stringify(body)
      }
-     return fetch(config.api + path, {
+
+     let loginToken = await Storage.loginToken.get()
+     headers['Authorization'] = loginToken
+
+     return await fetch(config.api + path, {
           method,
           body,
           headers,

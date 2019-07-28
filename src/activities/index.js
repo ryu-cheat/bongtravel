@@ -14,13 +14,22 @@ import {
 
 import Controller, { navigator } from '../plugins/controller'
 import Main from './main'
+import Login from './login'
+import { passStateToProps } from 'react-lingost'
+import * as LingostApi from '../lingost/api'
 
 class Index extends Component{
+  constructor(p) {
+    super(p)
+    LingostApi.loginCheck()
+  }
   render(){
-    return (
-      <Main />
-    )
+    return (this.props.isLogin ? <Main /> : <Login />)
   }
 }
 
-export default Index;
+const stateToProps = ({ user }) => ({
+  isLogin: user.isLogin,
+})
+
+export default passStateToProps(stateToProps)(Index);
