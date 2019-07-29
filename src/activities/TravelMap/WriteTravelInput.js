@@ -485,12 +485,13 @@ export default class WriteTravelInput extends Component{
         <View style={style.travelTabTitleInputWrapper}>
           <Text>일지 내용</Text>
           <TextInput
+            multiline
             maxLength={5000}
             defaultValue={this.input.description}
             key={dateKey}
             style={style.travelDescription}
             onChangeText={text => this.input.description = text.trim()}
-            onBlur={() => this.onTravelTabTitleChange()}
+            onBlur={() => this.saveInput('input')}
           />
         </View>
       </ScrollView>

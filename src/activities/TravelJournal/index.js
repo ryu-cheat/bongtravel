@@ -90,7 +90,7 @@ export default class TravelJournal extends React.Component {
                     <View style={{ height: 10, }} />
                     {!!journal.description && <View>
                          <Text style={style.titleText}>내용</Text>
-                         <Text style={style.description} numberOfLines={1}>{journal.description}</Text>
+                         <Text style={style.description}>{journal.description}</Text>
                          <View style={{ height: 10, }} />
                     </View>}
                </ScrollView>

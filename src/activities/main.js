@@ -11,6 +11,7 @@ import {
   View,
   Text,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
 } from 'react-native';
 
@@ -137,6 +138,13 @@ class Header extends Component{
       })
     }
   }
+  // 검색부분
+  searchQuery = ''
+  search = () => {
+    Controller.Search.search(this.searchQuery)
+  }
+
+
   render(){
     if ( this.state.tabId == 'home' ) {
       let { travel } = this.props
@@ -150,8 +158,18 @@ class Header extends Component{
       )
     } else if ( this.state.tabId == 'social' ) {
       return (
-        <View style={style.header_wrapper}>
-          <Text style={style.header_title}>소셜</Text>
+        <View style={[style.header_wrapper, { borderBottomColor:'#ddd', borderBottomWidth: 1 }]}>
+          <TextInput
+            style={{
+              flex: 1,
+            }}
+            placeholder='검색해주세요 !'
+            onChangeText={query => this.searchQuery = query.trim()}
+            onSubmitEditing={this.search}
+          />
+          <TouchableOpacity style={style.header_searchButton} onPress={this.search}>
+            <Text style={style.header_searchButtonText}>검색</Text>
+          </TouchableOpacity>
         </View>
       )
     } else if ( this.state.tabId == 'setting' ) {
@@ -191,6 +209,14 @@ const style = StyleSheet.create({
   header_wrapper: { height: 55, paddingHorizontal: 15, alignItems:'center', flexDirection:'row', },
   header_button: {},
   header_button_text: { color: '#777', fontSize: 13 },
+  header_searchButton: {
+    padding: 10,
+    borderRadius:5, 
+    backgroundColor:'#3772e9',
+  },
+  header_searchButtonText: {
+    color: '#fff',
+  },
 
   horizontalDivider: { height: 1, backgroundColor:'#efefef', }
 })

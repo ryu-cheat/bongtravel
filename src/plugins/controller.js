@@ -43,6 +43,10 @@ const writeTravel = {
 
 const inputBlurFunction = () => initPath('/src/components/services/ForceInputBlur.js')
 
+const Search = {
+     search: () => initPath('/src/activities/Social/index.js'),
+}
+
 module.exports = {
      mainTab,
      splash,
@@ -53,6 +57,8 @@ module.exports = {
      
      activityController,
      writeTravel,
+     
+     Search,
      
      
      // 그냥 함수

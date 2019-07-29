@@ -16,29 +16,74 @@ import TravelJournal from '../TravelJournal'
 
 const { width } = Dimensions.get('window')
 
-class Setting extends React.Component {
+class Social extends React.Component {
      state = {
           _loaded: false,
           journals: [],
      }
 
-     lastId = ''
+     lastId = '' // 최신순으로 불러올 때 필요
+     offset = 0 // 키워드 검색 시 필요
+     loadMore = () => { }
 
      constructor(p) {
           super(p)
           this.loadLatestJournals()
+
+          Controller.Search.search = this.search
      }
+
+     search = (query) => {
+          if (!query) { // 검색어 없으면 초기화
+               this.lastId = ''
+               this.setState({
+                    journals: [],
+               }, this.loadLatestJournals)
+          } else {
+               this.offset = 0
+               this.setState({
+                    journals: [],
+               }, () => {
+                    this.keywordSearch(query)
+               })
+          }
+     }
+
+     keywordSearch = (query) => {
+          this.loadMore = this.keywordSearch
+
+          loading = true
+          API.social.keywordSearch(query, this.offset).then(rs => {
+               this.loading = false
+               if (rs.journals.length > 0) {
+                    this.offset += rs.journals.length
+               } else {
+                    // 검색할게 없으면 loadMore 초기화
+                    this.loadMore = () => { }
+               }
+               this.setState({
+                    _loaded: true,
+                    journals: this.state.journals.concat(rs.journals),
+               })
+          })
+     }
+
      showJournal = (journalId) => {
           Controller.navigator.push(<TravelJournal journalId={journalId} />)
      }
 
      loading = false
      loadLatestJournals = () => {
+          this.loadMore = this.loadLatestJournals
+
           this.loading = true
           API.social.getLatest(this.lastId).then(rs => {
                this.loading = false
                if (rs.journals.length > 0) {
                     this.lastId = rs.journals[rs.journals.length - 1]._id
+               } else {
+                    // 검색할게 없으면 loadMore 초기화
+                    this.loadMore = () => { }
                }
                this.setState({
                     _loaded: true,
@@ -56,7 +101,7 @@ class Setting extends React.Component {
                contentOffset: { y: scrollTop },
           } = e.nativeEvent
           if (scrollHeight - 100 <= layoutHeight + scrollTop) {
-               this.loadLatestJournals()
+               this.loadMore()
           }
      }
      renderJournal = ({ item }) => {
@@ -93,7 +138,7 @@ class Setting extends React.Component {
      }
 }
 
-export default Setting
+export default Social
 
 const style = StyleSheet.create({
      wrapper: {
@@ -118,6 +163,6 @@ const style = StyleSheet.create({
      },
      journalContentWrapper: {
           flexDirection: 'row',
-          paddingVertical:10,
+          paddingVertical: 10,
      },
 })

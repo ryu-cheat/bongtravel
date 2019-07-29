@@ -76,7 +76,7 @@ export default class TravelMap extends Component {
         <Image source={{ uri: journal.picture.path }} style={style.journalPicture} />
         <View style={{ width: 10, }} />
         <View style={{ flex: 1 }}>
-          <Text style={style.titleText}>{journal.title}</Text>
+          <Text style={style.titleText} numberOfLines={1}>{journal.title}</Text>
           <Text style={style.journalDateText}>{Dates.join('/')} {D.toLocaleTimeString()}</Text>
         </View>
 
