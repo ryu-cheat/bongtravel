@@ -45,6 +45,7 @@ export default class WriteTravelInput extends Component{
   input = {
     inputTabKey: this.props.inputTab.key,
     myLatLng: this.props.myLatLng,
+    description: '',
     pictures: [],
     date: Date.now(),
   }
@@ -479,6 +480,18 @@ export default class WriteTravelInput extends Component{
             style={style.travelDateInput}
             onChangeText={text => this.props.inputTab.title = text.trim()}
             onBlur={() => this.onTravelTabTitleChange()}
+          />
+        </View>
+        <View style={style.travelTabTitleInputWrapper}>
+          <Text>일지 내용</Text>
+          <TextInput
+            multiline
+            maxLength={5000}
+            defaultValue={this.input.description}
+            key={dateKey}
+            style={style.travelDescription}
+            onChangeText={text => this.input.description = text.trim()}
+            onBlur={() => this.saveInput('input')}
           />
         </View>
       </ScrollView>
