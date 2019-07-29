@@ -49,11 +49,19 @@ class Social extends React.Component {
           }
      }
 
+     lastKeywords = []
      keywordSearch = (query) => {
           this.loadMore = this.keywordSearch
 
           loading = true
-          API.social.keywordSearch(query, this.offset).then(rs => {
+          API.social.keywordSearch(query, this.offset, this.lastKeywords).then(rs => {
+               /**
+                * this.lastKeywords로 최근 검색어를 저장한다.
+                * 최근검색어도 검색스코어에 포함한다.
+                */
+               this.lastKeywords = ([query]).concat(this.lastKeywords.filter(key => key != query))
+               this.lastKeywords.length = Math.min(this.lastKeywords.length, 3) // 3개로 자른다
+
                this.loading = false
                if (rs.journals.length > 0) {
                     this.offset += rs.journals.length
