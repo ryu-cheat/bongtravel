@@ -111,6 +111,10 @@ export const travelStyle = StyleSheet.create({
   inputTabText:{
     fontSize:12,
   },
+  editingText:{
+    fontSize:11,
+    color:'#ff6395',
+  },
   inputTabsScrollBottomLine:{
     height: 1,
     backgroundColor:'#ffffff',

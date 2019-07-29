@@ -113,7 +113,7 @@ class TravelMap extends Component{
           </MapView>
           <WriteTravelButton travel={this.props.travel} />
         </View>
-        <TravelJournals journals={this.state.journals} />
+        <TravelJournals travel={this.props.travel} journals={this.state.journals} />
       </View>
     )
   }
