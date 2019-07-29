@@ -76,7 +76,6 @@ export default class TravelMap extends Component {
         Controller.navigator.push(<TravelJournal journalId={journal._id} />)
       }
 
-      console.warn(journal)
       const editJournal = async() => {
         let inputTabs = await travelWrite.InputTabs(travel._id).get()
         if (inputTabs.filter(inputTab => inputTab.key == journal._id).length == 0) {

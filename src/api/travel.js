@@ -8,6 +8,19 @@ export const writeTravelJournal = (travelId, body: Object = {}): Promise => {
      })
 }
 
+export const editTravelJournal = (journalId, body: Object = {}): Promise => {
+     return request.put({
+         path: `/travels/journals/${journalId}`,
+         body,
+     })
+}
+
+export const deleteTravelJournal = (journalId): Promise => {
+     return request.delete({
+         path: `/travels/journals/${journalId}`,
+     })
+}
+
 export const getTravels = (): Promise => {
     return request.get({
         path: `/travels`,
