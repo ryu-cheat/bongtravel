@@ -65,7 +65,9 @@ class SplashView extends Component{ // splash를 없애줄 때 state의 영향�
         toValue: 0,
       }).start(()=>{
         this.animation.stop()
-        this.setState({ show: false })
+
+        // 이걸 timeout으로 안주면 faceOut이 안되더라구요
+        setTimeout(() => this.setState({ show: false }), 100)
       })
     }, Math.max( 0, 3000 - (Date.now() - this.loadedTimeMs) ))
   }
