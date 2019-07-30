@@ -8,8 +8,6 @@ export const uploadTravelPicture = (filePath): Promise => {
      return request.post({
          path: `/upload/picture`,
          body: formData,
-         headers: {
-            'Content-Type': 'multipart/form-data',
-         },
+         isUpload: true,
      })
 }

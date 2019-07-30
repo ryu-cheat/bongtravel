@@ -145,7 +145,7 @@
 - <b style='color: #3772e9'>(완료)</b> 오픈된 관광지 데이터를 DB에 저장, 위경도 기반의 관광지 정보 제공
     - '사용자 직접 쌓아가는 관광지 DB'라는 컨셉으로 개발했습니다.
     - 사용자가 일지를 등록하면 해당 좌표의 관광지가 등록됩니다.
-    - 300m 범위 내에서 관광지명이 같은것이 있을 경우 그루핑(group)하여 현재 위치에서의 거리, 등록된 갯수로 스코어를 내어 <b>'이 좌표의 관광지'<b/>와 '<b>근처 관광지(+거리)</b>'를 표시해줍니다.
+    - 300m 범위 내에서 관광지명이 같은것이 있을 경우 그루핑(group)하여 현재 위치에서의 거리, 등록된 갯수로 스코어를 내어 <b>'이 좌표의 관광지'</b>와 '<b>근처 관광지(+거리)</b>'를 표시해줍니다.
 - <b style='color: #3772e9'>(완료)</b> GIT 필수 사용
     - <a href='https://github.com/lingobong/bongtravel' target='_blank'>https://github.com/lingobong/bongtravel</a>
     - <a href='https://github.com/lingobong/bongtravelapi' target='_blank'>https://github.com/lingobong/bongtravelapi</a>
