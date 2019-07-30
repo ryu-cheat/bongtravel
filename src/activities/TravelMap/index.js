@@ -54,11 +54,11 @@ class TravelMap extends Component{
   }
   getDelta = (journals: Array, key: 'longitude' | 'latitude') => {
     if (journals.length <= 1) {
-      return 0.2
+      return 0.05
     }else{
       let minValue = journals.reduce((prev, current)=> Math.min(prev, current[key]), journals[0][key])
       let maxValue = journals.reduce((prev, current)=> Math.max(prev, current[key]), journals[0][key])
-      return Math.max( 0.2, (maxValue - minValue) * 3)
+      return Math.max( 0.05, (maxValue - minValue) * 3)
     }
   }
   getInitialRegion = (journals: Array) => {
