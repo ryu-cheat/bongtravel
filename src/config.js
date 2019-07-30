@@ -11,12 +11,12 @@ let production = {
 
 // console.disableYellowBox=true
 module.exports = {
-  api: 'http://172.30.1.16:9720/',
-  picture: 'http://172.30.1.16:9720/static/',
+  api: 'http://172.30.1.33:9720/',
+  picture: 'http://172.30.1.33:9720/static/',
   naverInit: {
     kConsumerKey: 'nZk9BwuggjZYRneUilVP',
     kConsumerSecret: 'Iir4a3VHYu',
-    kServiceAppName: 'lendland',
+    kServiceAppName: 'bongtravel',
     kServiceAppUrlScheme: 'dooboolaburlscheme', // only for iOS
   },
 

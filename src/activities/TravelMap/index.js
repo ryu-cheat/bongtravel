@@ -86,7 +86,7 @@ class TravelMap extends Component{
       <View style={style.travelWrapper}>
         <View style={style.relative}>
           <MapView
-            key={initialRegion}
+            key={JSON.stringify(initialRegion)}
             initialRegion={initialRegion}
             style={{ width, height: width }}>
             {journals.map((visit, index) => (
