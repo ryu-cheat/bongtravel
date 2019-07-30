@@ -15,12 +15,11 @@ async function request({
      if (!headers) headers = {};
      if (!headers.authorization) headers.authorization = '';
 
-     if (!headers['Content-Type']) 
+     if (!headers['Content-Type']) headers['Content-Type'] = 'application/json'
      if (!!body) {
           if (isUpload) {
                headers['Content-Type'] = 'multipart/form-data'
           } else {
-               headers['Content-Type'] = 'application/json'
                body = JSON.stringify(body)
           }
      }
