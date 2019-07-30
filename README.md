@@ -148,6 +148,7 @@
     - 300m 범위 내에서 관광지명이 같은것이 있을 경우 그루핑(group)하여 현재 위치에서의 거리, 등록된 갯수로 스코어를 내어 <b>'이 좌표의 관광지'<b/>와 '<b>근처 관광지(+거리)</b>'를 표시해줍니다.
 - <b style='color: #3772e9'>(완료)</b> GIT 필수 사용
     - <a href='https://github.com/lingobong/bongtravel' target='_blank'>https://github.com/lingobong/bongtravel</a>
+    - <a href='https://github.com/lingobong/bongtravelapi' target='_blank'>https://github.com/lingobong/bongtravelapi</a>
 - <b style='color: #3772e9'>(완료)</b> open api를 사용해 네아로(네이버 아이디로 로그인) 연동
     - react-lingost 로 로그인 상태, 회원정보를 저장하며 로그인을 하지 않았을 경우에 네이버 아이디로 로그인해야합니다.
     - 등록된 데이터가 없을 경우 자동으로 가입된 후 로그인합니다.
