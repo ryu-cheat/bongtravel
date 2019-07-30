@@ -18,8 +18,10 @@ import {
   FlatList,
 } from 'react-native';
 
+import Storage, { travelWrite } from '../../plugins/storage'
 import Controller from '../../plugins/controller'
 import TravelJournal from '../TravelJournal'
+import WriteTravel from './WriteTravel'
 
 function getDistance({ from: { lat: lat1, lng: lng1 }, to: { lat: lat2, lng: lng2 } }) {
   var Lat = (lat2 - lat1) * Math.PI / 180
@@ -41,9 +43,6 @@ export default class TravelMap extends Component {
   state = {
 
   }
-  showJournal = (journalId) => {
-    Controller.navigator.push(<TravelJournal journalId={journalId}/>)
-  }
   renderItem = ({ item }) => {
     if (item.type == 'gap') {
       return (<View style={{ height: 20 }} />)
@@ -55,6 +54,7 @@ export default class TravelMap extends Component {
       </View>)
     } else {
       let journal = item.journal
+      let travel = this.props.travel
       let D = new Date(journal.date)
 
       let Dates = [D.getFullYear(), D.getMonth() + 1, D.getDate()].map(d => d < 10 ? '0' + d : '' + d)
@@ -72,7 +72,47 @@ export default class TravelMap extends Component {
         }
       }
 
-      return (<TouchableOpacity style={style.journalWrapper} onPress={() => this.showJournal(journal._id)}>
+      const showJournal = () => {
+        Controller.navigator.push(<TravelJournal journalId={journal._id} />)
+      }
+
+      const editJournal = async() => {
+        let inputTabs = await travelWrite.InputTabs(travel._id).get()
+        if (inputTabs.filter(inputTab => inputTab.key == journal._id).length == 0) {
+          let dateString = [ D.getFullYear(), D.getMonth()+1, D.getDate() ].map(d => (d+'').length == 1 ? '0'+d : d ).join('-')
+          let timeString = [ D.getHours(), D.getMinutes() ].map(d => (d+'').length == 1 ? '0'+d : d ).join(':')
+
+          let inputTab = {
+            title: journal.title,
+            date: dateString+' '+timeString,
+            key: journal._id,
+            edit: true,
+          }
+          inputTabs.push(inputTab)
+          await travelWrite.InputTabs(travel._id).set(inputTabs)
+
+          let inputs = await travelWrite.Inputs(this.props.travel._id).get()
+          inputs.push({
+            inputTabKey: journal._id,
+            myLatLng: {
+              lat: parseFloat(journal.latitude),
+              lng: parseFloat(journal.longitude),
+              latDelta: 0.03,
+              lngDelta: 0.03,
+            },
+            description: journal.description || '',
+            pictures: journal.pictures,
+            date: D.getTime(),
+          })
+
+          await travelWrite.Inputs(travel._id).set(inputs)
+        }
+
+        Controller.navigator.push(<WriteTravel travel={travel} defaultTabKey={journal._id} />)
+      }
+
+
+      return (<TouchableOpacity style={style.journalWrapper} onPress={showJournal} onLongPress={editJournal}>
         <Image source={{ uri: journal.picture.path }} style={style.journalPicture} />
         <View style={{ width: 10, }} />
         <View style={{ flex: 1 }}>

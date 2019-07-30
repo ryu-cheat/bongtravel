@@ -293,8 +293,6 @@ export default class WriteTravelInput extends Component{
     await this.saveInput('tab')
     writeTravel.loadInputTabs()
   }
-  // 여행일지 삭제하기(나중에 추가된 코드라.. 구조바꾸기(deleteTravelJournal를 밖으로 빼는거)보단 함수 오버로딩하여 오류없이 실행되도록 함
-  deleteTravelJournal = () => {}
   // 버튼 그려주기
   renderButtons = () => {
     
@@ -323,30 +321,43 @@ export default class WriteTravelInput extends Component{
       }
       if (!writeActive) return;
       Controller.inputBlurFunction()
-      if (await confirm(edit ? '수정 완료하시겠습니까?' : '작성하시겠습니까?')) {
-        // 로딩 화면으로 바꾼 후 요청
-        this.setState({ _loaded: false },()=>{
-          travel.writeTravelJournal(this.props.travel._id, {
-            inputTab: inputTab,
-            input: this.input,
-          }).then(rs => {
-            if ( rs.success ) {
-              this.deleteTravelJournal(true)
-              Controller.activityController.travel.loadJournals()
-              alert('완료되었습니다')
-            } else {
-              this.setState({ _loaded: true })
-              alert('작성 중 오류가 발생했습니다.')
-            }
+
+      const finishCallback = rs => {
+        if ( rs.success ) {
+          DeleteTravelJournalLocal(true)
+          Controller.activityController.travel.loadJournals()
+          alert('완료되었습니다')
+        } else {
+          this.setState({ _loaded: true })
+          alert(edit ? '수정 중 오류가 발생했습니다.' : '작성 중 오류가 발생했습니다.')
+        }
+      }
+
+      if (edit) {
+        if (await confirm('수정 완료하시겠습니까?')) {
+          this.setState({ _loaded: false },()=>{
+            travel.editTravelJournal(inputTab.key, {
+              inputTab: inputTab,
+              input: this.input,
+            }).then(finishCallback)
           })
-        })
+        }
+      }else{
+        if (await confirm('작성하시겠습니까?')) {
+          this.setState({ _loaded: false },()=>{
+            travel.writeTravelJournal(this.props.travel._id, {
+              inputTab: inputTab,
+              input: this.input,
+            }).then(finishCallback)
+          })
+        }
       }
     };
 
     // 삭제하기
-    const DeleteTravelJournal = async(force = false) => {
+    const DeleteTravelJournalLocal = async(force = false) => {
       Controller.inputBlurFunction()
-      if (force || await confirm(edit ? '이 일지를 삭제하시겠습니까?':'입력중인 일지를 삭제하시겠습니까?')) {
+      if (force || await confirm('입력중인 일지를 삭제하시겠습니까?')) {
         let inputs = await travelWrite.Inputs(this.props.travel._id).get()
         inputs = inputs.filter(input => input.inputTabKey != inputTab.key)
         await travelWrite.Inputs(this.props.travel._id).set(inputs)
@@ -363,16 +374,39 @@ export default class WriteTravelInput extends Component{
         }
       }
     };
-    this.deleteTravelJournal = DeleteTravelJournal
+
+    const DeleteTravelJournalServer = async () => {
+      if (await confirm('내 여행에서 이 일지를 삭제하시겠습니까?')) {
+        this.setState({ _loaded: false },()=>{
+          travel.deleteTravelJournal(inputTab.key, {
+            inputTab: inputTab,
+            input: this.input,
+          }).then(rs => {
+            if ( rs.success ) {
+              DeleteTravelJournalLocal(true)
+              Controller.activityController.travel.loadJournals()
+              alert('완료되었습니다')
+            } else {
+              this.setState({ _loaded: true })
+              alert('삭제 중 오류가 발생했습니다.')
+            }
+          })
+        })
+      }
+    }
+    
 
     // view
     return (<View style={style.buttonWrapper}>
       <TouchableOpacity style={[style.button, { backgroundColor:writeActive?'#3772e9':'#e1e1e1' }]} onPress={WriteTravelJournal}>
         <Text style={[style.buttonText, { color:writeActive?'#fff':'#000' }]}>{edit ? '수정 완료' : '작성 완료'}</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[style.button, { backgroundColor:'#e1e1e1' }]} onPress={()=>DeleteTravelJournal()}>
-        <Text style={[style.buttonText, { color:'#000' }]}>{edit ? '일지 삭제' : '입력중인 일지 삭제'}</Text>
+      <TouchableOpacity style={[style.button, { backgroundColor:'#e1e1e1' }]} onPress={()=>DeleteTravelJournalLocal()}>
+        <Text style={[style.buttonText, { color:'#000' }]}>{'입력중인 일지 삭제'}</Text>
       </TouchableOpacity>
+      {edit && (<TouchableOpacity style={[style.button, { backgroundColor:'#e1e1e1' }]} onPress={()=>DeleteTravelJournalServer()}>
+        <Text style={[style.buttonText, { color:'#000' }]}>{'일지 삭제'}</Text>
+    </TouchableOpacity>)}
     </View>)
   }
 

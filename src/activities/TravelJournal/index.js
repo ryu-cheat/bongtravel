@@ -32,7 +32,7 @@ export default class TravelJournal extends React.Component {
           </View>)
      }
      render() {
-          let { _loaded, journal } = this.state
+          let { _loaded, journal, tourlistAttractions } = this.state
           if (!_loaded) return (<View />) // 나중에 로딩 뷰 띄우기
 
           let D = new Date(journal.date)
@@ -46,11 +46,15 @@ export default class TravelJournal extends React.Component {
                longitudeDelta: 0.0421,
           }
 
+
+          let reprTLA = tourlistAttractions.filter(t => t.isRepr) // 이 좌표의 관광지
+          let TLA = tourlistAttractions.filter(t => !t.isRepr) // 이 근처의 관광지
+
           return (<>
                <TouchableOpacity onPress={() => Controller.navigator.pop()} style={style.backButton}>
                     <Text style={style.backButtonText}>뒤로</Text>
                </TouchableOpacity>
-               <View style={{ height: 1, backgroundColor: '#ddd', }} />
+               <View style={style.divider} />
                <ScrollView style={style.wrapper} showsVerticalScrollIndicator={false}>
                     <View style={{ height: 10, }} />
                     <View style={style.oneLineContent}>
@@ -65,7 +69,7 @@ export default class TravelJournal extends React.Component {
                     <View style={{ height: 10, }} />
                     <View>
                          <Text style={style.titleText}>위치</Text>
-                         <View style={{ height: 10, }} />
+                         <View style={style.divider} />
                          <View style={style.mapview}>
                               <MapView
                                    initialRegion={region}
@@ -76,6 +80,30 @@ export default class TravelJournal extends React.Component {
                               {/* <View style={style.mapviewLock} /> */}
                          </View>
                     </View>
+                    <View style={{ height: 10, }} />
+                    <View style={style.divider} />
+                    <View style={{ height: 10, }} />
+
+                    {tourlistAttractions.length > 0 && (<View style={style.tourlistAttractionWrapper}>
+                         {reprTLA.length > 0 && (<>
+                              <View style={style.oneLineContent}>
+                                   <Text style={[style.titleText, { fontWeight: 'bold' }]}>이 좌표의 관광지</Text>
+                                   <Text style={style.oneLineContentDescriptionText} numberOfLines={1}>{reprTLA[0].name}</Text>
+                                   <Text style={style.tourlistAttractionScoreText} numberOfLines={1}>({reprTLA[0].score}점)</Text>
+                              </View>
+                         </>)}
+                         {(reprTLA.length > 0 && TLA.length > 0) && <View style={[style.divider, { marginVertical: 10 }]} />}
+                         {TLA.length > 0 && TLA.map(tla => (<React.Fragment key={tla.name}>
+                              <View style={style.oneLineContent}>
+                                   <Text style={[style.titleText, { fontWeight: 'bold' }]}>근처 관광지</Text>
+                                   <Text style={style.oneLineContentDescriptionText} numberOfLines={1}>{tla.name}</Text>
+                                   <Text style={style.tourlistAttractionScoreText} numberOfLines={1}>({tla.score}점/{tla.distance}m)</Text>
+                              </View>
+                         </React.Fragment>))}
+                    </View>)}
+                    <View style={{ height: 10, }} />
+
+                    <View style={style.divider} />
                     <View style={{ height: 10, }} />
                     <View>
                          <Text style={style.titleText}>사진들</Text>
@@ -90,9 +118,11 @@ export default class TravelJournal extends React.Component {
                     <View style={{ height: 10, }} />
                     {!!journal.description && <View>
                          <Text style={style.titleText}>내용</Text>
+                         <View style={style.divider} />
                          <Text style={style.description}>{journal.description}</Text>
-                         <View style={{ height: 10, }} />
                     </View>}
+                    <View style={{ height: 10, }} />
+
                </ScrollView>
           </>)
      }
@@ -101,6 +131,7 @@ export default class TravelJournal extends React.Component {
           API.travel.getJournals(journalId).then(rs => {
                this.setState({
                     journal: rs.journal,
+                    tourlistAttractions: rs.tourlistAttractions,
                     _loaded: true,
                })
           })
@@ -108,6 +139,19 @@ export default class TravelJournal extends React.Component {
 }
 
 const style = StyleSheet.create({
+     tourlistAttractionScoreText: {
+          fontSize: 11,
+          color: '#3772e9',
+     },
+     tourlistAttractionWrapper: {
+          backgroundColor: '#eee',
+          borderRadius: 5,
+          padding: 10,
+     },
+     divider: {
+          height: 1,
+          backgroundColor: '#ddd',
+     },
      wrapper: {
           flex: 1,
           paddingHorizontal: 10,
@@ -117,7 +161,7 @@ const style = StyleSheet.create({
           alignItems: 'center',
      },
      titleText: {
-          width: 80,
+          marginRight: 15,
           fontSize: 15,
      },
      oneLineContentDescriptionText: {
@@ -138,6 +182,7 @@ const style = StyleSheet.create({
      },
 
      mapview: {
+          marginTop: 5,
           position: 'relative',
           borderRadius: 5,
           overflow: 'hidden',

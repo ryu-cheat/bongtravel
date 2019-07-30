@@ -32,7 +32,7 @@ export default class WriteTravel extends Component{
     _loaded: false,
     myLatLng: null,
     inputTabs:[],
-    selectedInputTabKey: null,
+    selectedInputTabKey: this.props.defaultTabKey,
   }
   constructor(p){
     super(p)
@@ -150,7 +150,10 @@ export default class WriteTravel extends Component{
         selectedInputTab = inputTab
       }
       inputTabViews.push(<InputTab active={active} style={style.inputTab} key={inputTab.key} onPress={onPress}>
-        <InputTabText active={active} style={style.inputTabText}>{inputTab.title.trim() || '제목 없음'}</InputTabText>
+        <InputTabText active={active} style={style.inputTabText}>
+          {inputTab.title.trim() || '제목 없음'}
+          {inputTab.edit && <Text style={style.editingText}>(수정중)</Text>}
+        </InputTabText>
       </InputTab>)
     }
 
