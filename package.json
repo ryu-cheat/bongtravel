@@ -8,6 +8,7 @@
     "test": "jest",
     "lint": "eslint ."
   },
+  "license": "MIT",
   "dependencies": {
     "@react-native-community/async-storage": "^1.5.1",
     "@react-native-community/geolocation": "^1.4.2",
