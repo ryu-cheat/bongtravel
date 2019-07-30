@@ -6,7 +6,8 @@ async function request({
      path,
      method,
      body,
-     headers = {}
+     headers = {},
+     isUpload = false,
 }) {
      path = path.replace(/^\//,'')
      
@@ -14,9 +15,14 @@ async function request({
      if (!headers) headers = {};
      if (!headers.authorization) headers.authorization = '';
 
-     if (!headers['Content-Type']) headers['Content-Type'] = 'application/json'
+     if (!headers['Content-Type']) 
      if (!!body) {
-          body = body.constructor.name == 'FormData' ? body : JSON.stringify(body)
+          if (isUpload) {
+               headers['Content-Type'] = 'multipart/form-data'
+          } else {
+               headers['Content-Type'] = 'application/json'
+               body = JSON.stringify(body)
+          }
      }
 
      let loginToken = await Storage.loginToken.get()
@@ -38,7 +44,7 @@ async function request({
 }
 
 // get 은 단순 읽어오기이므로, 오류 시 세 번까지 다시 시도한다
-async function getFunction({ path, body, header={} }){
+async function getFunction({ path, body, headers={} }){
      return new Promise(async(resolve, reject) => {
           let error = null
           for (let i = 0 ; i < 3 ; i ++) {
@@ -47,7 +53,7 @@ async function getFunction({ path, body, header={} }){
                     let req = await request({
                          method: 'GET',
                          path,
-                         header,
+                         headers,
                     })
                     return resolve(req)
                }catch(e){
@@ -60,12 +66,13 @@ async function getFunction({ path, body, header={} }){
      })
 }
 
-function postFunction({ path, body, headers={} }){
+function postFunction({ path, body, headers={}, isUpload }){
      return request({
           method: 'POST',
           path,
           body,
           headers,
+          isUpload,
      })
 }
 
@@ -78,12 +85,13 @@ function deleteFunction({ path, body, headers={} }){
      })
 }
 
-function putFunction({ path, body, headers={} }){
+function putFunction({ path, body, headers={}, isUpload }){
      return request({
           method: 'PUT',
           path,
           body,
           headers,
+          isUpload,
      })
 }
 
