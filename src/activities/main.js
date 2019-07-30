@@ -192,6 +192,7 @@ const Tabbar = styled.TouchableOpacity`
   align-items: center;
   height: 50;
   justify-content: center;
+  background-color: #efefef;
 `
 const TabbarText = styled.Text`
   font-size: 13;

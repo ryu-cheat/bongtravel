@@ -57,6 +57,12 @@ export default class Login extends Component {
 
   render() {
     return (<View style={style.wrapper}>
+      <View style={{ height: 155 }} />
+      <View style={style.logoWrapper}>
+        <Image source={require('../../static/image/logo.png')} resizeMode='contain' style={style.logo} />
+        <View style={{ height: 10, }} />
+        <Text style={style.logoText}>BONGTravel</Text>
+      </View>
       <View style={{ flex: 1 }} />
       <View style={style.snsLoginButtonWrapper}>
         <TouchableOpacity style={[style.snsLoginButton, {}]} onPress={this.naverLogin}>
@@ -74,6 +80,19 @@ export default class Login extends Component {
 const style = StyleSheet.create({
   wrapper: {
     flex: 1,
+  },
+
+  logoWrapper: {
+    alignItems: 'center',
+  },
+  logoText: {
+    color: '#999',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  logo: {
+    width: 120,
+    height: 120,
   },
 
   snsLoginButtonWrapper: {

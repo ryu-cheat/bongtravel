@@ -29,7 +29,7 @@ export const travelInputStyle = StyleSheet.create({
   pictureAddButton:{
     alignItems:'center',
     justifyContent:'center',
-    borderColor:'#000',
+    borderColor:'#ddd',
     borderWidth:1,
     flex: 1,
   },
