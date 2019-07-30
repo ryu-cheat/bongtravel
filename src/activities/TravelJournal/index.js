@@ -32,7 +32,7 @@ export default class TravelJournal extends React.Component {
           </View>)
      }
      render() {
-          let { _loaded, journal } = this.state
+          let { _loaded, journal, tourlistAttractions } = this.state
           if (!_loaded) return (<View />) // 나중에 로딩 뷰 띄우기
 
           let D = new Date(journal.date)
@@ -47,6 +47,9 @@ export default class TravelJournal extends React.Component {
           }
 
 
+          let reprTLA = tourlistAttractions.filter(t => t.isRepr) // 이 좌표의 관광지
+          let TLA = tourlistAttractions.filter(t => !t.isRepr) // 이 근처의 관광지
+
           return (<>
                <TouchableOpacity onPress={() => Controller.navigator.pop()} style={style.backButton}>
                     <Text style={style.backButtonText}>뒤로</Text>
@@ -56,13 +59,11 @@ export default class TravelJournal extends React.Component {
                     <View style={{ height: 10, }} />
                     <View style={style.oneLineContent}>
                          <Text style={style.titleText}>여행제목</Text>
-                         <View style={style.divider} />
                          <Text style={style.oneLineContentDescriptionText} numberOfLines={1}>{journal.title}</Text>
                     </View>
                     <View style={{ height: 10, }} />
                     <View style={style.oneLineContent}>
                          <Text style={style.titleText}>여행날짜</Text>
-                         <View style={style.divider} />
                          <Text style={style.oneLineContentDescriptionText} numberOfLines={1}>{dateString} {D.toLocaleTimeString()}</Text>
                     </View>
                     <View style={{ height: 10, }} />
@@ -79,6 +80,30 @@ export default class TravelJournal extends React.Component {
                               {/* <View style={style.mapviewLock} /> */}
                          </View>
                     </View>
+                    <View style={{ height: 10, }} />
+                    <View style={style.divider} />
+                    <View style={{ height: 10, }} />
+
+                    {tourlistAttractions.length > 0 && (<View style={style.tourlistAttractionWrapper}>
+                         {reprTLA.length > 0 && (<>
+                              <View style={style.oneLineContent}>
+                                   <Text style={[style.titleText, { fontWeight: 'bold' }]}>이 좌표의 관광지</Text>
+                                   <Text style={style.oneLineContentDescriptionText} numberOfLines={1}>{reprTLA[0].name}</Text>
+                                   <Text style={style.tourlistAttractionScoreText} numberOfLines={1}>({reprTLA[0].score}점)</Text>
+                              </View>
+                         </>)}
+                         {(reprTLA.length > 0 && TLA.length > 0) && <View style={[style.divider, { marginVertical: 10 }]} />}
+                         {TLA.length > 0 && TLA.map(tla => (<React.Fragment key={tla.name}>
+                              <View style={style.oneLineContent}>
+                                   <Text style={[style.titleText, { fontWeight: 'bold' }]}>근처 관광지</Text>
+                                   <Text style={style.oneLineContentDescriptionText} numberOfLines={1}>{tla.name}</Text>
+                                   <Text style={style.tourlistAttractionScoreText} numberOfLines={1}>({tla.score}점/{tla.distance}m)</Text>
+                              </View>
+                         </React.Fragment>))}
+                    </View>)}
+                    <View style={{ height: 10, }} />
+
+                    <View style={style.divider} />
                     <View style={{ height: 10, }} />
                     <View>
                          <Text style={style.titleText}>사진들</Text>
@@ -114,6 +139,15 @@ export default class TravelJournal extends React.Component {
 }
 
 const style = StyleSheet.create({
+     tourlistAttractionScoreText: {
+          fontSize: 11,
+          color: '#3772e9',
+     },
+     tourlistAttractionWrapper: {
+          backgroundColor: '#eee',
+          borderRadius: 5,
+          padding: 10,
+     },
      divider: {
           height: 1,
           backgroundColor: '#ddd',
@@ -127,8 +161,7 @@ const style = StyleSheet.create({
           alignItems: 'center',
      },
      titleText: {
-          marginBottom: 5,
-          width: 80,
+          marginRight: 15,
           fontSize: 15,
      },
      oneLineContentDescriptionText: {
