@@ -58,7 +58,7 @@ export default class TravelJournal extends React.Component {
                <ScrollView style={style.wrapper} showsVerticalScrollIndicator={false}>
                     <View style={{ height: 10, }} />
                     <View style={style.oneLineContent}>
-                         <Text style={style.titleText}>여행제목</Text>
+                         <Text style={style.titleText}>관광지 명</Text>
                          <Text style={style.oneLineContentDescriptionText} numberOfLines={1}>{journal.title}</Text>
                     </View>
                     <View style={{ height: 10, }} />

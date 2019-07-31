@@ -507,7 +507,7 @@ export default class WriteTravelInput extends Component{
           </View>
         </View>
         <View style={style.travelTabTitleInputWrapper}>
-          <Text>여행일지 제목</Text>
+          <Text>관광지 명</Text>
           <TextInput
             defaultValue={this.props.inputTab.title}
             key={dateKey}

@@ -50,7 +50,7 @@ class Social extends React.Component {
      }
 
      lastKeywords = []
-     keywordSearch = (query) => {
+     keywordSearch = (query = this.lastKeywords[0]) => {
           this.loadMore = this.keywordSearch
 
           loading = true
