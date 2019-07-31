@@ -22,6 +22,7 @@ import Storage, { travelWrite } from '../../plugins/storage'
 import Controller from '../../plugins/controller'
 import TravelJournal from '../TravelJournal'
 import WriteTravel from './WriteTravel'
+import ItemAnimatedFlatList from '../../components/ItemAnimatedFlatList';
 
 function getDistance({ from: { lat: lat1, lng: lng1 }, to: { lat: lat2, lng: lng2 } }) {
   var Lat = (lat2 - lat1) * Math.PI / 180
@@ -76,15 +77,15 @@ export default class TravelMap extends Component {
         Controller.navigator.push(<TravelJournal journalId={journal._id} />)
       }
 
-      const editJournal = async() => {
+      const editJournal = async () => {
         let inputTabs = await travelWrite.InputTabs(travel._id).get()
         if (inputTabs.filter(inputTab => inputTab.key == journal._id).length == 0) {
-          let dateString = [ D.getFullYear(), D.getMonth()+1, D.getDate() ].map(d => (d+'').length == 1 ? '0'+d : d ).join('-')
-          let timeString = [ D.getHours(), D.getMinutes() ].map(d => (d+'').length == 1 ? '0'+d : d ).join(':')
+          let dateString = [D.getFullYear(), D.getMonth() + 1, D.getDate()].map(d => (d + '').length == 1 ? '0' + d : d).join('-')
+          let timeString = [D.getHours(), D.getMinutes()].map(d => (d + '').length == 1 ? '0' + d : d).join(':')
 
           let inputTab = {
             title: journal.title,
-            date: dateString+' '+timeString,
+            date: dateString + ' ' + timeString,
             key: journal._id,
             edit: true,
           }
@@ -141,8 +142,8 @@ export default class TravelMap extends Component {
       let nextJournal = journals[journalIdx + 1]
       let distanceToNextJournal = 0
 
-      newJournals.push({ type: 'journal', journal, key: journal._id })
-      
+      newJournals.push({ flatlistAnimation: true, type: 'journal', journal, key: journal._id })
+
       if (!!nextJournal) {
         distanceToNextJournal = getDistance({
           from: {
@@ -154,14 +155,15 @@ export default class TravelMap extends Component {
             lng: nextJournal.longitude,
           }
         })
-        newJournals.push({ type: 'distance', distance: distanceToNextJournal, key: journal._id + '/distance' })
+        newJournals.push({ flatlistAnimation: true, type: 'distance', distance: distanceToNextJournal, key: journal._id + '/distance' })
       }
     }
     newJournals.push({ type: 'gap', key: 'gap2' })
 
 
     return (
-      <FlatList
+      <ItemAnimatedFlatList
+        defaultLoadedCount={2}
         style={style.wrapper}
         showsVerticalScrollIndicator={false}
         data={newJournals}
